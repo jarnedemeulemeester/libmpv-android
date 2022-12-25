@@ -1,4 +1,6 @@
-# mpvlib for Android
+# libmpv for Android
+
+Based on [mpv-android](https://github.com/mpv-android/mpv-android)
 
 ## Building from source
 
