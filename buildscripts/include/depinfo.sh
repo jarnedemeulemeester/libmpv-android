@@ -12,7 +12,6 @@ v_harfbuzz=6.0.0
 v_fribidi=1.0.12
 v_freetype=2-12-1
 v_mbedtls=2.28.2
-v_shaderc=2022.4
 v_libplacebo=5.229.1
 v_dav1d=1.0.0
 v_ffmpeg=5.1.2

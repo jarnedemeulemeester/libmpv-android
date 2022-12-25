@@ -34,8 +34,12 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
-# sharderc
-[ ! -d shaderc ] && git clone --depth 1 --branch v$v_shaderc https://github.com/google/shaderc.git shaderc
+# shaderc
+mkdir -p shaderc
+cat >shaderc/README <<'HEREDOC'
+Shaderc sources are provided by the NDK.
+see <ndk>/sources/third_party/shaderc
+HEREDOC
 
 # libplacebo
 [ ! -d libplacebo ] && git clone --depth 1 --branch v$v_libplacebo --recursive https://code.videolan.org/videolan/libplacebo.git libplacebo
