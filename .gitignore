@@ -1,0 +1,11 @@
+.gdb_history
+bin
+gen
+libs
+obj
+.gradle
+.idea
+**/*.iml
+build
+local.properties
+*~
