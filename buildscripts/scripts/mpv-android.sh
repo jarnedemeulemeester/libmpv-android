@@ -10,7 +10,7 @@ MPV_ANDROID="$DIR/../.."
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf $MPV_ANDROID/{app,.}/build $MPV_ANDROID/app/src/main/{libs,obj}
+	rm -rf $MPV_ANDROID/{libmpv,.}/build $MPV_ANDROID/libmpv/src/main/{libs,obj}
 	exit 0
 else
 	exit 255
@@ -29,6 +29,6 @@ prefix_x64=$(nativeprefix "x86_64")
 prefix_x86=$(nativeprefix "x86")
 
 PREFIX=$BUILD/prefix/armv7l PREFIX64=$prefix64 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
-ndk-build -C app/src/main -j$cores
+ndk-build -C libmpv/src/main -j$cores
 
 ./gradlew assemble

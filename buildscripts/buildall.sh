@@ -155,8 +155,8 @@ setup_prefix
 build $target
 
 if [ "$target" == "mpv-android" ]; then
-	[ -d ../app/build/outputs/aar ] && ls -lh ../app/build/outputs/aar/*.aar
-	[ -d ../app/build/libs ] && ls -lh ../app/build/libs/*.jar
+	[ -d ../libmpv/build/outputs/aar ] && ls -lh ../libmpv/build/outputs/aar/*.aar
+	[ -d ../libmpv/build/libs ] && ls -lh ../libmpv/build/libs/*.jar
 fi
 
 exit 0
