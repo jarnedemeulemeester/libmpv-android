@@ -116,7 +116,7 @@ build () {
 
 usage () {
 	printf '%s\n' \
-		"Usage: buildall.sh [options] [target]" \
+		"Usage: build.sh [options] [target]" \
 		"Builds the specified target (default: $target)" \
 		"-n             Do not build dependencies" \
 		"--clean        Clean build dirs before compiling" \
