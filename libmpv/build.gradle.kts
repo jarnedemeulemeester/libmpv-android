@@ -1,5 +1,6 @@
+@Suppress("DSL_SCOPE_VIOLATION") // False positive
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     id("maven-publish")
 }
 
@@ -40,5 +41,5 @@ publishing {
 }
 
 dependencies {
-    implementation("androidx.annotation:annotation:1.5.0")
+    implementation(libs.androidx.annotation)
 }

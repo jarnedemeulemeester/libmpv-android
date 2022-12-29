@@ -1,11 +1,6 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
-    }
+@Suppress("DSL_SCOPE_VIOLATION") // False positive
+plugins {
+    alias(libs.plugins.android.library) apply false
 }
 
 allprojects {
