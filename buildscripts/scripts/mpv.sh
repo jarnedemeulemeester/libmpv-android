@@ -24,3 +24,5 @@ PKG_CONFIG="pkg-config --static" \
 
 ./waf build -j$cores
 ./waf install --destdir="$prefix_dir"
+
+ln -sf "$prefix_dir"/lib/libmpv.so "$native_dir"

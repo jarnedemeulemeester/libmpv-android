@@ -23,7 +23,7 @@ abi=armeabi-v7a
 cd "$(dirname "$(which ndk-build)")/sources/third_party/shaderc"
 ndk-build -j$cores \
 	NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=Android.mk \
-	NDK_APPLICATION_MK="$application_mk" APP_ABI=$abi \
+	APP_PLATFORM=android-26 APP_STL=c++_shared APP_ABI=$abi \
 	NDK_APP_OUT="$builddir" NDK_APP_LIBS_OUT="$builddir/libs" \
 	libshaderc_combined
 

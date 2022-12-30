@@ -1,8 +1,8 @@
 #include <jni.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <locale.h>
+#include <cstdlib>
+#include <cstdio>
+#include <ctime>
+#include <clocale>
 #include <atomic>
 
 #include <mpv/client.h>
@@ -37,7 +37,7 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
 
     if (!env->GetJavaVM(&g_vm) && g_vm)
-        av_jni_set_java_vm(g_vm, NULL);
+        av_jni_set_java_vm(g_vm, nullptr);
     init_methods_cache(env);
 }
 
@@ -62,7 +62,7 @@ jni_func(void, init) {
         die("mpv init failed");
 
     g_event_thread_request_exit = false;
-    pthread_create(&event_thread_id, NULL, event_thread, NULL);
+    pthread_create(&event_thread_id, nullptr, event_thread, nullptr);
 }
 
 jni_func(void, destroy) {
@@ -72,10 +72,10 @@ jni_func(void, destroy) {
     // poke event thread and wait for it to exit
     g_event_thread_request_exit = true;
     mpv_wakeup(g_mpv);
-    pthread_join(event_thread_id, NULL);
+    pthread_join(event_thread_id, nullptr);
 
     mpv_terminate_destroy(g_mpv);
-    g_mpv = NULL;
+    g_mpv = nullptr;
 }
 
 jni_func(void, command, jobjectArray jarray) {
@@ -87,7 +87,7 @@ jni_func(void, command, jobjectArray jarray) {
         die("Cannot run command: too many arguments");
 
     for (int i = 0; i < len; ++i)
-        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
+        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), nullptr);
 
     mpv_command(g_mpv, arguments);
 

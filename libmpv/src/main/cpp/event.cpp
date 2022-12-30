@@ -8,7 +8,7 @@
 
 static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     jstring jprop = env->NewStringUTF(prop->name);
-    jstring jvalue = NULL;
+    jstring jvalue = nullptr;
     switch (prop->format) {
     case MPV_FORMAT_NONE:
         env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_S, jprop);
@@ -65,15 +65,15 @@ static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg) {
 }
 
 void *event_thread(void *arg) {
-    JNIEnv *env = NULL;
+    JNIEnv *env = nullptr;
     acquire_jni_env(g_vm, &env);
     if (!env)
         die("failed to acquire java env");
 
-    while (1) {
+    while (true) {
         mpv_event *mp_event;
-        mpv_event_property *mp_property = NULL;
-        mpv_event_log_message *msg = NULL;
+        mpv_event_property *mp_property;
+        mpv_event_log_message *msg;
 
         mp_event = mpv_wait_event(g_mpv, -1.0);
 
@@ -102,5 +102,5 @@ void *event_thread(void *arg) {
 
     g_vm->DetachCurrentThread();
 
-    return NULL;
+    return nullptr;
 }

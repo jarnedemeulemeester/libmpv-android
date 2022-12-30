@@ -1,6 +1,6 @@
 #include "log.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 void die(const char *msg)
 {

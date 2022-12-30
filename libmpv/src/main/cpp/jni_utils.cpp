@@ -1,13 +1,13 @@
 #include "jni_utils.h"
 
 #include <jni.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 {
     int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
     if (ret == JNI_EDETACHED)
-        return vm->AttachCurrentThread(env, NULL) == 0;
+        return vm->AttachCurrentThread(env, nullptr) == 0;
     else
         return ret == JNI_OK;
 }

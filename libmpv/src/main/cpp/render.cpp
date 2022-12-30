@@ -23,5 +23,5 @@ jni_func(void, detachSurface) {
     mpv_set_option(g_mpv, "wid", MPV_FORMAT_INT64, (void*) &wid);
 
     env->DeleteGlobalRef(surface);
-    surface = NULL;
+    surface = nullptr;
 }

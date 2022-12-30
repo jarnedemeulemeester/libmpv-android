@@ -14,7 +14,7 @@ else
 fi
 
 unset CC CXX
-meson $build --cross-file "$prefix_dir"/crossfile.txt \
+meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
   -Dvulkan=disabled -Ddemos=false
 
 ninja -C $build -j$cores

@@ -44,6 +44,7 @@ loadarch () {
 		exit 1
 	fi
 	export prefix_dir="$PWD/prefix/$prefix_name"
+	export native_dir="$PWD/../libmpv/src/main/jniLibs/$prefix_name"
 	export CC=$cc_triple-clang
 	export CXX=$cc_triple-clang++
 	export AR=llvm-ar
@@ -56,6 +57,10 @@ setup_prefix () {
 		# enforce flat structure (/usr/local -> /)
 		ln -s . "$prefix_dir/usr"
 		ln -s . "$prefix_dir/local"
+	fi
+	
+	if [ ! -d "$native_dir" ]; then
+		mkdir -p "$native_dir"
 	fi
 
 	local cpu_family=${ndk_triple%%-*}

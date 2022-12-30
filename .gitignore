@@ -1,10 +1,11 @@
 .gdb_history
 bin
 gen
-libs
+jniLibs
 obj
 .gradle
 .idea
+.cxx
 **/*.iml
 build
 local.properties
