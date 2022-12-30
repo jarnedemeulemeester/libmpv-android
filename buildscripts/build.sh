@@ -5,7 +5,6 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 cleanbuild=0
 nodeps=0
-clang=1
 target=mpv-android
 arch=armv7l
 
@@ -24,12 +23,12 @@ loadarch () {
 		export ndk_suffix=
 		export ndk_triple=arm-linux-androideabi
 		cc_triple=armv7a-linux-androideabi$apilvl
-		prefix_name=armv7l
+		prefix_name=armeabi-v7a
 	elif [ "$1" == "arm64" ]; then
 		export ndk_suffix=-arm64
 		export ndk_triple=aarch64-linux-android
 		cc_triple=$ndk_triple$apilvl
-		prefix_name=arm64
+		prefix_name=arm64-v8a
 	elif [ "$1" == "x86" ]; then
 		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
@@ -45,13 +44,8 @@ loadarch () {
 		exit 1
 	fi
 	export prefix_dir="$PWD/prefix/$prefix_name"
-	if [ $clang -eq 1 ]; then
-		export CC=$cc_triple-clang
-		export CXX=$cc_triple-clang++
-	else
-		export CC=$cc_triple-gcc
-		export CXX=$cc_triple-g++
-	fi
+	export CC=$cc_triple-clang
+	export CXX=$cc_triple-clang++
 	export AR=llvm-ar
 	export RANLIB=llvm-ranlib
 }
@@ -120,7 +114,6 @@ usage () {
 		"Builds the specified target (default: $target)" \
 		"-n             Do not build dependencies" \
 		"--clean        Clean build dirs before compiling" \
-		"--gcc          Use gcc compiler (unsupported!)" \
 		"--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86, x86_64)"
 	exit 0
 }
@@ -132,9 +125,6 @@ while [ $# -gt 0 ]; do
 		;;
 		-n|--no-deps)
 		nodeps=1
-		;;
-		--gcc)
-		clang=0
 		;;
 		--arch)
 		shift
