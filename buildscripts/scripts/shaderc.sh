@@ -36,7 +36,7 @@ mkdir -p "$prefix_dir"/lib/pkgconfig
 cat >"$prefix_dir"/lib/pkgconfig/shaderc_combined.pc <<"END"
 Name: shaderc_combined
 Description:
-Version: 2021.0-unknown
+Version: 2022.1-unknown
 Libs: -L/usr/lib -lshaderc_combined -lstdc++
 Cflags: -I/usr/include
 END
