@@ -2,27 +2,30 @@
 
 . ../../include/path.sh
 
+build=_build$ndk_suffix
+
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf _build$ndk_suffix
+	rm -rf $build
 	exit 0
 else
 	exit 255
 fi
 
-[ -f waf ] || ./bootstrap.py
+unset CC CXX # meson wants these unset
 
-PKG_CONFIG="pkg-config --static" \
-./waf configure \
-    --disable-cplayer \
-    --disable-vulkan \
-	--disable-iconv --lua=52 \
-	--enable-libmpv-shared \
-	--disable-manpage-build \
-	-o "`pwd`/_build$ndk_suffix"
+meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
+  -Ddefault_library=shared \
+  -Dcplayer=false \
+  -Dlibmpv=true \
+  -Dvulkan=disabled \
+  -Diconv=disabled \
+  -Dlua=lua \
+  -Djpeg=disabled
 
-./waf build -j$cores
-./waf install --destdir="$prefix_dir"
+meson compile -C $build -j$cores
+
+DESTDIR="$prefix_dir" meson install -C $build
 
 ln -sf "$prefix_dir"/lib/libmpv.so "$native_dir"
