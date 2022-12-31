@@ -6,7 +6,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 cleanbuild=0
 nodeps=0
 target=mpv-android
-arch=armv7l
+archs=(armv7l arm64 x86 x86_64)
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
@@ -76,7 +76,7 @@ wrap_mode = 'nodownload'
 [binaries]
 c = '$CC'
 cpp = '$CXX'
-ar = 'llvm-ar'
+ar = '$AR'
 strip = '$ndk_triple-strip'
 pkgconfig = 'pkg-config'
 [host_machine]
@@ -100,17 +100,23 @@ build () {
 			build $dep
 		done
 	fi
-	printf >&2 '\e[1;34m%s\e[m\n' "Building $1..."
-	if [ "$1" == "mpv-android" ]; then
-		pushd ..
-		BUILDSCRIPT=buildscripts/scripts/$1.sh
-	else
+	if [ "$1" != "mpv-android" ]; then
+	  printf >&2 '\e[1;34m%s\e[m\n' "Building $1..."
 		pushd deps/$1
 		BUILDSCRIPT=../../scripts/$1.sh
+		[ $cleanbuild -eq 1 ] && $BUILDSCRIPT clean
+    $BUILDSCRIPT build
+    popd
 	fi
-	[ $cleanbuild -eq 1 ] && $BUILDSCRIPT clean
-	$BUILDSCRIPT build
-	popd
+}
+
+assemble () {
+  printf >&2 '\e[1;34m%s\e[m\n' "Assembling $1..."
+  pushd ..
+  BUILDSCRIPT=buildscripts/scripts/mpv-android.sh
+  [ $cleanbuild -eq 1 ] && $BUILDSCRIPT clean
+  $BUILDSCRIPT build
+  popd
 }
 
 usage () {
@@ -119,7 +125,7 @@ usage () {
 		"Builds the specified target (default: $target)" \
 		"-n             Do not build dependencies" \
 		"--clean        Clean build dirs before compiling" \
-		"--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86, x86_64)"
+		"--arch <arch>  Build for specified architecture (supported: armv7l, arm64, x86, x86_64)"
 	exit 0
 }
 
@@ -145,11 +151,20 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-loadarch $arch
-setup_prefix
-build $target
+if [ -z $arch ]; then
+  for arch in ${archs[@]}; do
+    loadarch $arch
+    setup_prefix
+    build $target
+  done
+else
+  loadarch $arch
+  setup_prefix
+  build $target
+fi
 
 if [ "$target" == "mpv-android" ]; then
+  assemble
 	[ -d ../libmpv/build/outputs/aar ] && ls -lh ../libmpv/build/outputs/aar/*.aar
 	[ -d ../libmpv/build/libs ] && ls -lh ../libmpv/build/libs/*.jar
 fi

@@ -24,4 +24,4 @@ nativeprefix () {
 	fi
 }
 
-./gradlew assemble
+./gradlew assembleRelease
