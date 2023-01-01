@@ -4,6 +4,7 @@
 
 v_sdk=9123335_latest
 v_ndk=r25b
+v_ndk_n=25.1.8937393
 v_sdk_build_tools=33.0.1
 
 v_lua=5.2.4
