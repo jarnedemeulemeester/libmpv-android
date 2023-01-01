@@ -62,7 +62,7 @@ sdkmanager () {
 echo y | sdkmanager \
 	"platforms;android-33" \
 	"build-tools;${v_sdk_build_tools}" \
-	"ndk;${v_ndk_n}" \
+	"ndk;${v_ndk}" \
 	"cmake;3.22.1"
 
 # gas-preprocessor

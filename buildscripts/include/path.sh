@@ -23,6 +23,6 @@ if [ -n "$ndk_triple" ]; then
 	unset PKG_CONFIG_PATH
 fi
 
-toolchain=$(echo "$DIR/sdk/android-sdk-linux/ndk/$v_ndk_n/toolchains/llvm/prebuilt/"*)
-export PATH="$toolchain/bin:$DIR/sdk/android-sdk-linux/ndk/$v_ndk_n:$DIR/sdk/bin:$PATH"
+toolchain=$(echo "$DIR/sdk/android-sdk-linux/ndk/$v_ndk/toolchains/llvm/prebuilt/"*)
+export PATH="$toolchain/bin:$DIR/sdk/android-sdk-linux/ndk/$v_ndk:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
