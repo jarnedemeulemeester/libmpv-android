@@ -46,7 +46,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.jdtech.mpv"
             artifactId = "libmpv"
-            version = "0.35.0"
+            version = "0.1.0"
 
             afterEvaluate {
                 from(components["release"])
