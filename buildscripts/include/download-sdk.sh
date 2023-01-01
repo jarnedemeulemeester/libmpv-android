@@ -60,8 +60,7 @@ sdkmanager () {
 	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
 }
 echo y | sdkmanager \
-	"platforms;android-33" "build-tools;${v_sdk_build_tools}" \
-	"extras;android;m2repository"
+	"platforms;android-33" "build-tools;${v_sdk_build_tools}" "cmake;3.22.1"
 
 # Android NDK (either standalone or installed by SDK)
 if [ -d "android-ndk-${v_ndk}" ]; then
