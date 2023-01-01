@@ -60,25 +60,10 @@ sdkmanager () {
 	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
 }
 echo y | sdkmanager \
-	"platforms;android-33" "build-tools;${v_sdk_build_tools}" "cmake;3.22.1"
-
-# Android NDK (either standalone or installed by SDK)
-if [ -d "android-ndk-${v_ndk}" ]; then
-	:
-elif [ -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
-	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-elif [ -z "${os_ndk}" ]; then
-	echo y | sdkmanager "ndk;${v_ndk_n}"
-	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-else
-	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.zip"
-	unzip -q "android-ndk-${v_ndk}-${os_ndk}.zip"
-	rm "android-ndk-${v_ndk}-${os_ndk}.zip"
-fi
-if ! grep -qF "${v_ndk_n}" "android-ndk-${v_ndk}/source.properties"; then
-	echo "Error: NDK exists but is not the correct version (expecting ${v_ndk_n})"
-	exit 255
-fi
+	"platforms;android-33" \
+	"build-tools;${v_sdk_build_tools}" \
+	"ndk;${v_ndk_n}" \
+	"cmake;3.22.1"
 
 # gas-preprocessor
 mkdir -p bin

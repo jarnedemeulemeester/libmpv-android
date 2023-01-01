@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+. ../../include/depinfo.sh
 . ../../include/path.sh
 
 if [ "$1" == "build" ]; then
@@ -29,13 +30,7 @@ cpuflags=
 	--enable-{jni,mediacodec,mbedtls,libdav1d} --disable-vulkan \
 	--disable-static --enable-shared --enable-{gpl,version3} \
 	--disable-{stripping,doc,programs} \
-	--disable-{muxers,encoders,devices,filters} \
-	#--disable-decoders \
-	#--enable-decoder={h264,h264_mediacodec,hevc,hevc_mediacodec,vp8,vp8_mediacodec,vp9,vp9_mediacodec,mpeg2video,mpeg2_mediacodec,mpeg4,mpeg4_mediacodec,av1_mediacodec,ssa,srt,dvdsub,webvtt,aac,flac,ac3,eac3,truehd,dca,opus,libdav1d,vorbis,subrip} \
-	#--disable-demuxers \
-	#--enable-demuxer={matroska,mov,avi,srt,ass,webvtt,hls,mpegts,mpegvideo} \
-	#--disable-parsers \
-	#--enable-parser={aac,ac3,flac,h264,hevc,dvdsub,opus,vp8,vp9,vorbis,mpegvideo}
+	--disable-{muxers,encoders,devices,filters}
 
 make -j$cores
 make DESTDIR="$prefix_dir" install
