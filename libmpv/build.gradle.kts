@@ -1,7 +1,6 @@
 @Suppress("DSL_SCOPE_VIOLATION") // False positive
 plugins {
     alias(libs.plugins.android.library)
-    id("maven-publish")
 }
 
 android {
@@ -31,30 +30,16 @@ android {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "reposilite"
-            url = uri("https://reposilite.jdtech.dev/releases")
-            credentials(PasswordCredentials::class)
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "dev.jdtech.mpv"
-            artifactId = "libmpv"
-            version = "0.1.0"
-
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-}
-
 dependencies {
     implementation(libs.androidx.annotation)
+}
+
+extra.apply {
+    set("PUBLISH_GROUP_ID", "dev.jdtech.mpv")
+    set("PUBLISH_ARTIFACT_ID", "libmpv")
+    set("PUBLISH_VERSION", "0.1.0")
+}
+
+apply {
+    from("$rootDir/scripts/publish-module.gradle")
 }

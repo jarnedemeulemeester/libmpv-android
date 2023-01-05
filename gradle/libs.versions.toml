@@ -1,9 +1,11 @@
 [versions]
 android-plugin = "7.3.1"
 androidx-annotation = "1.5.0"
+publish-plugin = "1.1.0"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
+publish-plugin = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "publish-plugin" }
