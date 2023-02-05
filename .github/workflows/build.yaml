@@ -31,6 +31,8 @@ jobs:
       - name: Symlink SDK
         working-directory: ./buildscripts
         run: |
+          echo $pwd
+          ls -lah
           mkdir sdk
           ln -s ${ANDROID_HOME} ./sdk/android-sdk-linux
       - name: Download dependencies
