@@ -38,4 +38,4 @@ jobs:
         run: ./download.sh
       - name: Build
         working-directory: ./buildscripts
-        run: ./build.sh
+        run: ./build.sh libplacebo
