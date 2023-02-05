@@ -31,8 +31,6 @@ jobs:
       - name: Symlink SDK
         working-directory: ./buildscripts
         run: |
-          echo $PWD
-          ls -lah
           mkdir sdk
           ln -s ${ANDROID_HOME} ./sdk/android-sdk-linux
       - name: Download dependencies
@@ -40,4 +38,4 @@ jobs:
         run: ./download.sh
       - name: Build
         working-directory: ./buildscripts
-        run: ./build.sh libplacebo
+        run: ./build.sh

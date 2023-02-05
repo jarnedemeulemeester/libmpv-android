@@ -13,7 +13,6 @@ else
 fi
 
 builddir=$PWD
-application_mk=$PWD/../../../app/src/main/jni/Application.mk # APP_{PLATFORM,STL} are imported from here
 
 abi=armeabi-v7a
 [[ "$ndk_triple" == "aarch64"* ]] && abi=arm64-v8a
@@ -33,11 +32,12 @@ cp -r include/* "$prefix_dir/include"
 cp libs/*/$abi/libshaderc.a "$prefix_dir/lib/libshaderc_combined.a"
 
 # create a pkgconfig file
+# 'libc++' instead of 'libstdc++': workaround for meson linking bug
 mkdir -p "$prefix_dir"/lib/pkgconfig
 cat >"$prefix_dir"/lib/pkgconfig/shaderc_combined.pc <<"END"
 Name: shaderc_combined
 Description:
 Version: 2022.1-unknown
-Libs: -L/usr/lib -lshaderc_combined -lstdc++
+Libs: -L/usr/lib -lshaderc_combined -llibc++
 Cflags: -I/usr/include
 END
