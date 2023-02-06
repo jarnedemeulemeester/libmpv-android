@@ -39,5 +39,5 @@ Name: shaderc_combined
 Description:
 Version: 2022.1-unknown
 Libs: -L/usr/lib -lshaderc_combined -llibc++
-Cflags: -I/usr/include
+Cflags: -I${includedir}
 END
