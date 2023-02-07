@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-22.04
+    environment: release
+    if: ${{ contains(github.repository_owner, 'jarnedemeulemeester') || startsWith(github.ref, 'refs/tags/v') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.3.0
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.9.0
+        with:
+          distribution: temurin
+          java-version: 11
+      - name: Gradle Build Action
+        uses: gradle/gradle-build-action@v2.3.3
+      - name: Symlink SDK
+        working-directory: ./buildscripts
+        run: |
+          mkdir sdk
+          ln -s ${ANDROID_HOME} ./sdk/android-sdk-linux
+      - name: Download dependencies
+        working-directory: ./buildscripts
+        run: ./download.sh
+      - name: Build
+        working-directory: ./buildscripts
+        run: ./build.sh
+      - name: Publish to MavenCentral
+        run: ./gradlew publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
