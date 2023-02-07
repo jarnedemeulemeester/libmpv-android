@@ -39,3 +39,7 @@ jobs:
       - name: Build
         working-directory: ./buildscripts
         run: ./build.sh
+      - uses: actions/upload-artifact@v3.1.2
+        with:
+          name: libmpv-release.aar
+          path: ./libmpv/build/outputs/aar/libmpv-release.aar

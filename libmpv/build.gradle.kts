@@ -37,7 +37,7 @@ dependencies {
 extra.apply {
     set("PUBLISH_GROUP_ID", "dev.jdtech.mpv")
     set("PUBLISH_ARTIFACT_ID", "libmpv")
-    set("PUBLISH_VERSION", "0.1.0")
+    set("PUBLISH_VERSION", "0.1.1")
 }
 
 apply {
