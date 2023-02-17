@@ -31,6 +31,9 @@ jobs:
       - name: Download dependencies
         working-directory: ./buildscripts
         run: ./download.sh
+      - name: Apply patches
+        working-directory: ./buildscripts
+        run: ./patch.sh
       - name: Build
         working-directory: ./buildscripts
         run: ./build.sh
