@@ -6,8 +6,8 @@ plugins {
 android {
     namespace = "dev.jdtech.mpv"
     compileSdk = 33
-    buildToolsVersion = "33.0.1"
-    ndkVersion = "25.1.8937393"
+    buildToolsVersion = "33.0.2"
+    ndkVersion = "25.2.9519653"
 
     defaultConfig {
         minSdk = 26
@@ -37,7 +37,7 @@ dependencies {
 extra.apply {
     set("PUBLISH_GROUP_ID", "dev.jdtech.mpv")
     set("PUBLISH_ARTIFACT_ID", "libmpv")
-    set("PUBLISH_VERSION", "0.1.1")
+    set("PUBLISH_VERSION", "0.1.2")
 }
 
 apply {
