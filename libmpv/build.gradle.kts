@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // False positive
 plugins {
     alias(libs.plugins.android.library)
 }
@@ -11,7 +10,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 33
         consumerProguardFiles("proguard-rules.pro")
         externalNativeBuild {
             cmake {
@@ -20,12 +18,18 @@ android {
                 cppFlags += "-std=c++11"
             }
         }
-
     }
+
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
         }
     }
 }

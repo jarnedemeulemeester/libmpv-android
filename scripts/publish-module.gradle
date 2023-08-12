@@ -37,7 +37,7 @@ afterEvaluate {
 
                 pom {
                     name = PUBLISH_ARTIFACT_ID
-                    description = 'Stream Chat official Android SDK'
+                    description = 'libmpv for Android'
                     url = 'https://github.com/jarnedemeulemeester/libmpv-android'
                     licenses {
                         license {
