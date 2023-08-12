@@ -61,7 +61,7 @@ sdkmanager () {
 	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
 }
 echo y | sdkmanager \
-	"platforms;android-33" \
+	"platforms;android-34" \
 	"build-tools;${v_sdk_build_tools}" \
 	"ndk;${v_ndk}" \
 	"cmake;3.22.1"
