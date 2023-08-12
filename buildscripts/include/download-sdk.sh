@@ -12,12 +12,12 @@ if [ "$os" == "linux" ]; then
 		hash yum &>/dev/null && {
 			sudo yum install autoconf pkgconfig libtool ninja-build \
 			python3-pip python3-setuptools unzip wget;
-			sudo pip3 install meson; }
+			sudo pip3 install meson jsonschema jinja2; }
 		apt-get -v &>/dev/null && {
 		    sudo apt-get update;
 			sudo apt-get install -y autoconf pkg-config libtool ninja-build nasm \
 			python3-pip python3-setuptools unzip;
-			sudo pip3 install meson; }
+			sudo pip3 install meson jsonschema jinja2; }
 	fi
 
 	if ! javac -version &>/dev/null; then
