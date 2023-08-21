@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
+    `maven-publish`
+    signing
 }
 
 android {
@@ -38,12 +40,54 @@ dependencies {
     implementation(libs.androidx.annotation)
 }
 
-extra.apply {
-    set("PUBLISH_GROUP_ID", "dev.jdtech.mpv")
-    set("PUBLISH_ARTIFACT_ID", "libmpv")
-    set("PUBLISH_VERSION", "0.1.3")
+configure<PublishingExtension> {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = "dev.jdtech.mpv"
+            artifactId = "libmpv"
+            version = "0.1.3"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+
+            pom {
+                name = "dev.jdtech.mpv"
+                description = "libmpv for Android"
+                url = "https://github.com/jarnedemeulemeester/libmpv-android"
+                licenses {
+                    license {
+                        name = "MIT license"
+                        url = "https://github.com/jarnedemeulemeester/libmpv-android/blob/main/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jarnedemeulemeester"
+                        name = "Jarne Demeulemeester"
+                        email = "jarnedemeulemeester@gmail.com"
+                    }
+                }
+                scm {
+                    url = "https://github.com/jarnedemeulemeester/libmpv-android.git"
+                    connection = "scm:git@github.com:jarnedemeulemeester/libmpv-android.git"
+                    developerConnection = "scm:git@github.com:jarnedemeulemeester/libmpv-android.git"
+                }
+                issueManagement {
+                    url = "https://github.com/jarnedemeulemeester/libmpv-android/issues"
+                }
+            }
+        }
+    }
 }
 
-apply {
-    from("$rootDir/scripts/publish-module.gradle")
+configure<SigningExtension> {
+    useInMemoryPgpKeys(
+        rootProject.ext["signing.keyId"]?.toString(),
+        rootProject.ext["signing.key"]?.toString(),
+        rootProject.ext["signing.password"]?.toString(),
+    )
+    sign {
+        extensions.getByType<PublishingExtension>().publications
+    }
 }
