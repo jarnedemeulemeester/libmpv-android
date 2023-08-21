@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.androidx.annotation)
 }
 
-configure<PublishingExtension> {
+publishing {
     publications {
         create<MavenPublication>("release") {
             groupId = "dev.jdtech.mpv"
@@ -81,13 +81,11 @@ configure<PublishingExtension> {
     }
 }
 
-configure<SigningExtension> {
+signing {
     useInMemoryPgpKeys(
         rootProject.ext["signing.keyId"]?.toString(),
         rootProject.ext["signing.key"]?.toString(),
         rootProject.ext["signing.password"]?.toString(),
     )
-    sign {
-        extensions.getByType<PublishingExtension>().publications
-    }
+    sign(publishing.publications)
 }
