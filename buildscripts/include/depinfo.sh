@@ -8,7 +8,7 @@ v_sdk_build_tools=34.0.0
 
 v_lua=5.2.4
 v_libass=0.17.1
-v_harfbuzz=8.2.0
+v_harfbuzz=8.2.1
 v_fribidi=1.0.13
 v_freetype=2-13-2
 v_mbedtls=3.4.1
