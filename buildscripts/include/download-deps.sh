@@ -34,9 +34,6 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
-# libplacebo
-[ ! -d libplacebo ] && git clone --depth 1 --branch v$v_libplacebo --recursive https://code.videolan.org/videolan/libplacebo.git libplacebo
-
 # mpv
 [ ! -d mpv ] && git clone --depth 1 --branch v$v_mpv https://github.com/mpv-player/mpv.git mpv
 
