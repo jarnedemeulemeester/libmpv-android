@@ -1,0 +1,63 @@
+diff --git a/library/aesni.c b/library/aesni.c
+index 59bcd3d..f787497 100644
+--- a/library/aesni.c
++++ b/library/aesni.c
+@@ -29,6 +29,17 @@
+ #include <immintrin.h>
+ #endif
+ 
++#if defined(MBEDTLS_ARCH_IS_X86)
++#if defined(MBEDTLS_COMPILER_IS_GCC)
++#pragma GCC push_options
++#pragma GCC target ("pclmul,sse2,aes")
++#define MBEDTLS_POP_TARGET_PRAGMA
++#elif defined(__clang__)
++#pragma clang attribute push (__attribute__((target("pclmul,sse2,aes"))), apply_to=function)
++#define MBEDTLS_POP_TARGET_PRAGMA
++#endif
++#endif
++
+ #if !defined(MBEDTLS_AES_USE_HARDWARE_ONLY)
+ /*
+  * AES-NI support detection routine
+@@ -384,6 +395,15 @@ static void aesni_setkey_enc_256(unsigned char *rk_bytes,
+ }
+ #endif /* !MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH */
+ 
++#if defined(MBEDTLS_POP_TARGET_PRAGMA)
++#if defined(__clang__)
++#pragma clang attribute pop
++#elif defined(__GNUC__)
++#pragma GCC pop_options
++#endif
++#undef MBEDTLS_POP_TARGET_PRAGMA
++#endif
++
+ #else /* MBEDTLS_AESNI_HAVE_CODE == 1 */
+ 
+ #if defined(__has_feature)
+diff --git a/library/aesni.h b/library/aesni.h
+index 165859a..1a116cf 100644
+--- a/library/aesni.h
++++ b/library/aesni.h
+@@ -39,6 +39,11 @@
+ #define MBEDTLS_AESNI_HAVE_INTRINSICS
+ #endif
+ 
++/* For 32-bit, we only support intrinsics */
++#if defined(MBEDTLS_ARCH_IS_X86) && (defined(__GNUC__) || defined(__clang__))
++#define MBEDTLS_AESNI_HAVE_INTRINSICS
++#endif
++
+ /* Choose the implementation of AESNI, if one is available.
+  *
+  * Favor the intrinsics-based implementation if it's available, for better
+@@ -48,7 +53,7 @@
+ #if defined(MBEDTLS_AESNI_HAVE_INTRINSICS)
+ #define MBEDTLS_AESNI_HAVE_CODE 2 // via intrinsics
+ #elif defined(MBEDTLS_HAVE_ASM) && \
+-    defined(__GNUC__) && defined(MBEDTLS_ARCH_IS_X64)
++    (defined(__GNUC__) || defined(__clang__)) && defined(MBEDTLS_ARCH_IS_X64)
+ /* Can we do AESNI with inline assembly?
+  * (Only implemented with gas syntax, only for 64-bit.)
+  */
