@@ -30,7 +30,8 @@ cpuflags=
 	--enable-{jni,mediacodec,mbedtls,libdav1d} --disable-vulkan \
 	--disable-static --enable-shared --enable-{gpl,version3} \
 	--disable-{stripping,doc,programs} \
-	--disable-{muxers,encoders,devices,filters}
+	--disable-{muxers,encoders,devices,filters} \
+	--disable-v4l2-m2m
 
 make -j$cores
 make DESTDIR="$prefix_dir" install
