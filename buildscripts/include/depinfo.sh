@@ -12,9 +12,10 @@ v_harfbuzz=8.3.0
 v_fribidi=1.0.13
 v_freetype=2-13-2
 v_mbedtls=3.5.1
+v_libplacebo=6.338.1
 v_dav1d=1.3.0
 v_ffmpeg=6.1
-v_mpv=0.36.0
+v_mpv=0.37.0
 
 
 ## Dependency tree
@@ -29,6 +30,6 @@ dep_harfbuzz=()
 dep_libass=(freetype fribidi harfbuzz)
 dep_lua=()
 dep_libplacebo=()
-dep_mpv=(ffmpeg libass lua)
+dep_mpv=(ffmpeg libass lua libplacebo)
 dep_mpv_android=(mpv)
 
