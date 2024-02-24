@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  NDK_VER: 26.1.10909125
+  NDK_VER: 26.2.11394342
 
 jobs:
   build:
