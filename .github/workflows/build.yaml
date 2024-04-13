@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  NDK_VER: 26.2.11394342
+  NDK_VER: 26.3.11579264
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /usr/local/lib/android/sdk/ndk/${{ env.NDK_VER }}
           key: ${{ runner.os }}-${{ env.NDK_VER }}

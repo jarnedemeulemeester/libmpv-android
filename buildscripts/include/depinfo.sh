@@ -3,17 +3,17 @@
 ## Dependency versions
 
 v_sdk=11076708_latest
-v_ndk=26.2.11394342
+v_ndk=26.3.11579264
 v_sdk_build_tools=34.0.0
 
 v_lua=5.2.4
 v_libass=0.17.1
-v_harfbuzz=8.3.0
+v_harfbuzz=8.4.0
 v_fribidi=1.0.13
 v_freetype=2-13-2
 v_mbedtls=3.5.2
 v_libplacebo=6.338.2
-v_dav1d=1.4.0
+v_dav1d=1.4.1
 v_ffmpeg=6.1.1
 v_mpv=0.37.0
 
