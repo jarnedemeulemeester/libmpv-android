@@ -14,8 +14,8 @@ v_freetype=2-13-2
 v_mbedtls=3.5.2
 v_libplacebo=6.338.2
 v_dav1d=1.4.1
-v_ffmpeg=6.1.1
-v_mpv=0.37.0
+v_ffmpeg=7.0
+v_mpv=0.38.0
 
 
 ## Dependency tree
