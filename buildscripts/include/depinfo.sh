@@ -4,7 +4,7 @@
 
 v_sdk=11076708_latest
 v_ndk=26.3.11579264
-v_sdk_build_tools=34.0.0
+v_sdk_build_tools=35.0.0
 
 v_lua=5.2.4
 v_libass=0.17.2
