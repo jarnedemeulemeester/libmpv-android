@@ -7,12 +7,12 @@ v_ndk=26.3.11579264
 v_sdk_build_tools=35.0.0
 
 v_lua=5.2.4
-v_libass=0.17.2
+v_libass=0.17.3
 v_harfbuzz=9.0.0
 v_fribidi=1.0.15
 v_freetype=2-13-2
 v_mbedtls=3.5.2
-v_libplacebo=6.338.2
+v_libplacebo=7.349.0
 v_dav1d=1.4.3
 v_ffmpeg=7.0.1
 v_mpv=0.38.0
