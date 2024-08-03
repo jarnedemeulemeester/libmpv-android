@@ -15,7 +15,10 @@ android {
         consumerProguardFiles("proguard-rules.pro")
         externalNativeBuild {
             cmake {
-                arguments += "-DANDROID_STL=c++_shared"
+                arguments += listOf(
+                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                )
                 cFlags += "-Werror"
                 cppFlags += "-std=c++11"
             }
