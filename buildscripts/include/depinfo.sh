@@ -11,10 +11,10 @@ v_libass=0.17.3
 v_harfbuzz=10.0.1
 v_fribidi=1.0.16
 v_freetype=2-13-3
-v_mbedtls=3.5.2
+v_mbedtls=3.6.1
 v_libplacebo=7.349.0
 v_dav1d=1.4.3
-v_ffmpeg=7.0.2
+v_ffmpeg=7.1
 v_mpv=0.39.0
 
 
