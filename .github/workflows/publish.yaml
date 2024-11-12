@@ -4,13 +4,11 @@ on:
   push:
     tags:
       - v*
-    branches:
-      - master
 
 jobs:
   publish:
     name: Publish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     environment: release
     if: ${{ contains(github.repository_owner, 'jarnedemeulemeester') || startsWith(github.ref, 'refs/tags/v') }}
     steps:
@@ -22,7 +20,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Symlink SDK
         working-directory: ./buildscripts
         run: |
@@ -46,3 +44,9 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            ./libmpv/build/outputs/aar/libmpv-release.aar
