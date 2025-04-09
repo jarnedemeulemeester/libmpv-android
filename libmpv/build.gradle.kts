@@ -6,9 +6,9 @@ plugins {
 
 android {
     namespace = "dev.jdtech.mpv"
-    compileSdk = 35
-    buildToolsVersion = "35.0.0"
-    ndkVersion = "27.1.12297006"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
+    ndkVersion = "28.0.13004108"
 
     defaultConfig {
         minSdk = 26
@@ -17,7 +17,6 @@ android {
             cmake {
                 arguments += listOf(
                     "-DANDROID_STL=c++_shared",
-                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
                 )
                 cFlags += "-Werror"
                 cppFlags += "-std=c++11"
@@ -28,7 +27,7 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.30.3"
+            version = "3.31.6"
         }
     }
 
