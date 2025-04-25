@@ -2,13 +2,15 @@
 
 ## Dependency versions
 
+v_platform=android-36
 v_sdk=13114758_latest
-v_ndk=28.0.13004108
+v_ndk=28.1.13356709
 v_sdk_build_tools=36.0.0
+v_cmake=3.31.6
 
 v_lua=5.2.4
 v_libass=0.17.3
-v_harfbuzz=11.0.1
+v_harfbuzz=11.1.0
 v_fribidi=1.0.16
 v_freetype=2-13-3
 v_mbedtls=3.6.3
