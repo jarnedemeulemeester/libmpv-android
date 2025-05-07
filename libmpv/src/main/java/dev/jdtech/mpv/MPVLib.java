@@ -1,7 +1,6 @@
 package dev.jdtech.mpv;
 
 // Wrapper for native library
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -57,6 +56,8 @@ public class MPVLib {
 
     private static final List<EventObserver> observers = new ArrayList<>();
 
+    private static final List<LogObserver> log_observers = new ArrayList<>();
+
     public static void addObserver(EventObserver o) {
         synchronized (observers) {
             observers.add(o);
@@ -69,49 +70,65 @@ public class MPVLib {
         }
     }
 
+    public static void removeObservers() {
+        synchronized (observers) {
+            observers.clear();
+        }
+    }
+
+    public static void removeLogObservers() {
+        synchronized (log_observers) {
+            log_observers.clear();
+        }
+    }
+
     public static void eventProperty(String property, long value) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.eventProperty(property, value);
+            }
         }
     }
 
     public static void eventProperty(String property, double value) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.eventProperty(property, value);
+            }
         }
     }
 
     public static void eventProperty(String property, boolean value) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.eventProperty(property, value);
+            }
         }
     }
 
     public static void eventProperty(String property, String value) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.eventProperty(property, value);
+            }
         }
     }
 
     public static void eventProperty(String property) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.eventProperty(property);
+            }
         }
     }
 
     public static void event(@Event int eventId) {
         synchronized (observers) {
-            for (EventObserver o : observers)
+            for (EventObserver o : observers) {
                 o.event(eventId);
+            }
         }
     }
-
-    private static final List<LogObserver> log_observers = new ArrayList<>();
 
     public static void addLogObserver(LogObserver o) {
         synchronized (log_observers) {
@@ -127,12 +144,14 @@ public class MPVLib {
 
     public static void logMessage(String prefix, @LogLevel int level, String text) {
         synchronized (log_observers) {
-            for (LogObserver o : log_observers)
+            for (LogObserver o : log_observers) {
                 o.logMessage(prefix, level, text);
+            }
         }
     }
 
     public interface EventObserver {
+
         void eventProperty(@NonNull String property);
 
         void eventProperty(@NonNull String property, long value);
@@ -147,23 +166,25 @@ public class MPVLib {
     }
 
     public interface LogObserver {
+
         void logMessage(@NonNull String prefix, @LogLevel int level, @NonNull String text);
     }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            MPV_FORMAT_NONE,
-            MPV_FORMAT_STRING,
-            MPV_FORMAT_OSD_STRING,
-            MPV_FORMAT_FLAG,
-            MPV_FORMAT_INT64,
-            MPV_FORMAT_DOUBLE,
-            MPV_FORMAT_NODE,
-            MPV_FORMAT_NODE_ARRAY,
-            MPV_FORMAT_NODE_MAP,
-            MPV_FORMAT_BYTE_ARRAY
+        MPV_FORMAT_NONE,
+        MPV_FORMAT_STRING,
+        MPV_FORMAT_OSD_STRING,
+        MPV_FORMAT_FLAG,
+        MPV_FORMAT_INT64,
+        MPV_FORMAT_DOUBLE,
+        MPV_FORMAT_NODE,
+        MPV_FORMAT_NODE_ARRAY,
+        MPV_FORMAT_NODE_MAP,
+        MPV_FORMAT_BYTE_ARRAY
     })
-    public @interface Format {}
+    public @interface Format {
+    }
 
     public static final int MPV_FORMAT_NONE = 0;
     public static final int MPV_FORMAT_STRING = 1;
@@ -176,28 +197,28 @@ public class MPVLib {
     public static final int MPV_FORMAT_NODE_MAP = 8;
     public static final int MPV_FORMAT_BYTE_ARRAY = 9;
 
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            MPV_EVENT_NONE,
-            MPV_EVENT_SHUTDOWN,
-            MPV_EVENT_LOG_MESSAGE,
-            MPV_EVENT_GET_PROPERTY_REPLY,
-            MPV_EVENT_SET_PROPERTY_REPLY,
-            MPV_EVENT_COMMAND_REPLY,
-            MPV_EVENT_START_FILE,
-            MPV_EVENT_END_FILE,
-            MPV_EVENT_FILE_LOADED,
-            MPV_EVENT_CLIENT_MESSAGE,
-            MPV_EVENT_VIDEO_RECONFIG,
-            MPV_EVENT_AUDIO_RECONFIG,
-            MPV_EVENT_SEEK,
-            MPV_EVENT_PLAYBACK_RESTART,
-            MPV_EVENT_PROPERTY_CHANGE,
-            MPV_EVENT_QUEUE_OVERFLOW,
-            MPV_EVENT_HOOK
+        MPV_EVENT_NONE,
+        MPV_EVENT_SHUTDOWN,
+        MPV_EVENT_LOG_MESSAGE,
+        MPV_EVENT_GET_PROPERTY_REPLY,
+        MPV_EVENT_SET_PROPERTY_REPLY,
+        MPV_EVENT_COMMAND_REPLY,
+        MPV_EVENT_START_FILE,
+        MPV_EVENT_END_FILE,
+        MPV_EVENT_FILE_LOADED,
+        MPV_EVENT_CLIENT_MESSAGE,
+        MPV_EVENT_VIDEO_RECONFIG,
+        MPV_EVENT_AUDIO_RECONFIG,
+        MPV_EVENT_SEEK,
+        MPV_EVENT_PLAYBACK_RESTART,
+        MPV_EVENT_PROPERTY_CHANGE,
+        MPV_EVENT_QUEUE_OVERFLOW,
+        MPV_EVENT_HOOK
     })
-    public @interface Event {}
+    public @interface Event {
+    }
 
     public static final int MPV_EVENT_NONE = 0;
     public static final int MPV_EVENT_SHUTDOWN = 1;
@@ -219,16 +240,17 @@ public class MPVLib {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            MPV_LOG_LEVEL_NONE,
-            MPV_LOG_LEVEL_FATAL,
-            MPV_LOG_LEVEL_ERROR,
-            MPV_LOG_LEVEL_WARN,
-            MPV_LOG_LEVEL_INFO,
-            MPV_LOG_LEVEL_V,
-            MPV_LOG_LEVEL_DEBUG,
-            MPV_LOG_LEVEL_TRACE
+        MPV_LOG_LEVEL_NONE,
+        MPV_LOG_LEVEL_FATAL,
+        MPV_LOG_LEVEL_ERROR,
+        MPV_LOG_LEVEL_WARN,
+        MPV_LOG_LEVEL_INFO,
+        MPV_LOG_LEVEL_V,
+        MPV_LOG_LEVEL_DEBUG,
+        MPV_LOG_LEVEL_TRACE
     })
-    public @interface LogLevel {}
+    public @interface LogLevel {
+    }
 
     public static final int MPV_LOG_LEVEL_NONE = 0;
     public static final int MPV_LOG_LEVEL_FATAL = 10;
