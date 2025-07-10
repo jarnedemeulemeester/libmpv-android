@@ -8,7 +8,7 @@ android {
     namespace = "dev.jdtech.mpv"
     compileSdk = 36
     buildToolsVersion = "36.0.0"
-    ndkVersion = "28.1.13356709"
+    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         minSdk = 26
