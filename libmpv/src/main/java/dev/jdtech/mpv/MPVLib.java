@@ -24,33 +24,23 @@ public class MPVLib {
     }
 
     public static native void create(Context appctx);
-
     public static native void init();
-
     public static native void destroy();
-
     public static native void attachSurface(Surface surface);
-
     public static native void detachSurface();
 
     public static native void command(@NonNull String[] cmd);
 
     public static native int setOptionString(@NonNull String name, @NonNull String value);
 
+    // FIXME: get methods are actually nullable
     public static native Integer getPropertyInt(@NonNull String property);
-
     public static native void setPropertyInt(@NonNull String property, @NonNull Integer value);
-
     public static native Double getPropertyDouble(@NonNull String property);
-
     public static native void setPropertyDouble(@NonNull String property, @NonNull Double value);
-
     public static native Boolean getPropertyBoolean(@NonNull String property);
-
     public static native void setPropertyBoolean(@NonNull String property, @NonNull Boolean value);
-
     public static native String getPropertyString(@NonNull String property);
-
     public static native void setPropertyString(@NonNull String property, @NonNull String value);
 
     public static native void observeProperty(@NonNull String property, @Format int format);
@@ -134,15 +124,10 @@ public class MPVLib {
 
     public interface EventObserver {
         void eventProperty(@NonNull String property);
-
         void eventProperty(@NonNull String property, long value);
-
         void eventProperty(@NonNull String property, double value);
-
         void eventProperty(@NonNull String property, boolean value);
-
         void eventProperty(@NonNull String property, @NonNull String value);
-
         void event(@Event int eventId);
     }
 

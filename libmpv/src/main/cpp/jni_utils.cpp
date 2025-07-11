@@ -1,3 +1,4 @@
+#define UTIL_EXTERN
 #include "jni_utils.h"
 
 #include <jni.h>
@@ -7,20 +8,13 @@ bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 {
     int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
     if (ret == JNI_EDETACHED)
-        return vm->AttachCurrentThread(env, nullptr) == 0;
+        return vm->AttachCurrentThread(env, NULL) == 0;
     else
         return ret == JNI_OK;
 }
 
 // Apparently it's considered slow to FindClass and GetMethodID every time we need them,
 // so let's have a nice cache here
-jclass java_Integer, java_Double, java_Boolean;
-jmethodID java_Integer_init, java_Integer_intValue, java_Double_init, java_Double_doubleValue, java_Boolean_init, java_Boolean_booleanValue;
-jmethodID java_GLSurfaceView_requestRender;
-
-jclass mpv_MPVLib;
-jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_Sd, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event, mpv_MPVLib_logMessage_SiS;
-
 void init_methods_cache(JNIEnv *env) {
     static bool methods_initialized = false;
     if (methods_initialized)

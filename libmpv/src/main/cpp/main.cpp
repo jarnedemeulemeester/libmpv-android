@@ -37,7 +37,12 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
 
     if (!env->GetJavaVM(&g_vm) && g_vm)
-        av_jni_set_java_vm(g_vm, nullptr);
+        av_jni_set_java_vm(g_vm, NULL);
+
+    jobject global_appctx = env->NewGlobalRef(appctx);
+    if (global_appctx)
+        av_jni_set_android_app_ctx(global_appctx, NULL);
+
     init_methods_cache(env);
 }
 
@@ -62,32 +67,36 @@ jni_func(void, init) {
         die("mpv init failed");
 
     g_event_thread_request_exit = false;
-    pthread_create(&event_thread_id, nullptr, event_thread, nullptr);
+    if (pthread_create(&event_thread_id, NULL, event_thread, NULL) != 0)
+        die("thread create failed");
+    pthread_setname_np(event_thread_id, "event_thread");
 }
 
 jni_func(void, destroy) {
-    if (!g_mpv)
-        die("mpv destroy called but it's already destroyed");
+    if (!g_mpv) {
+        ALOGV("mpv destroy called but it's already destroyed");
+        return;
+    }
 
     // poke event thread and wait for it to exit
     g_event_thread_request_exit = true;
     mpv_wakeup(g_mpv);
-    pthread_join(event_thread_id, nullptr);
+    pthread_join(event_thread_id, NULL);
 
     mpv_terminate_destroy(g_mpv);
-    g_mpv = nullptr;
+    g_mpv = NULL;
 }
 
 jni_func(void, command, jobjectArray jarray) {
+    CHECK_MPV_INIT();
+
     const char *arguments[128] = { 0 };
     int len = env->GetArrayLength(jarray);
-    if (!g_mpv)
-        die("Cannot run command: mpv is not initialized");
     if (len >= ARRAYLEN(arguments))
-        die("Cannot run command: too many arguments");
+        die("too many command arguments");
 
     for (int i = 0; i < len; ++i)
-        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), nullptr);
+        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
 
     mpv_command(g_mpv, arguments);
 
