@@ -1,5 +1,5 @@
 [versions]
-android-plugin = "8.11.0"
+android-plugin = "8.11.1"
 androidx-annotation = "1.9.1"
 publish-plugin = "2.0.0"
 
