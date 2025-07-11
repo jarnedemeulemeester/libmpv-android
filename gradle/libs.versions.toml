@@ -1,11 +1,11 @@
 [versions]
 android-plugin = "8.11.1"
 androidx-annotation = "1.9.1"
-publish-plugin = "2.0.0"
+maven-publish = "0.33.0"
 
 [libraries]
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
-publish-plugin = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "publish-plugin" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
