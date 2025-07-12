@@ -125,10 +125,10 @@ index c5d2fb4b94..4c57985443 100644
  #endif
 diff --git a/audio/out/ao_aaudio.c b/audio/out/ao_aaudio.c
 new file mode 100644
-index 0000000000..9fda71d96c
+index 0000000000..691330eb1a
 --- /dev/null
 +++ b/audio/out/ao_aaudio.c
-@@ -0,0 +1,429 @@
+@@ -0,0 +1,422 @@
 +/*
 + * AAudio audio output driver
 + *
@@ -433,6 +433,9 @@ index 0000000000..9fda71d96c
 +        assert(channel_mask != AAUDIO_CHANNEL_INVALID);
 +
 +        p->AAudioStreamBuilder_setChannelMask(p->builder, channel_mask);
++    } else {
++        int32_t channel_count = (int32_t) ao->channels.num;
++        p->AAudioStreamBuilder_setChannelCount(p->builder, channel_count);
 +    }
 +
 +    p->AAudioStreamBuilder_setDeviceId(p->builder, p->device_id);
@@ -454,16 +457,6 @@ index 0000000000..9fda71d96c
 +                                                              AAUDIO_CONTENT_TYPE_MOVIE);
 +        p->AAudioStreamBuilder_setUsage(p->builder, AAUDIO_USAGE_MEDIA);
 +        p->AAudioStreamBuilder_setSessionId(p->builder, p->session_id);
-+    }
-+    if (p->device_api < 32) {
-+        int32_t channel_count = p->AAudioStream_getChannelCount(p->stream);
-+
-+        if (channel_count < 0 ||
-+            channel_count >= MP_ARRAY_SIZE(aaudio_default_chmaps) ||
-+            (ao->channels = aaudio_default_chmaps[channel_count]).num == 0) {
-+            MP_ERR(ao, "Unknown layout for channel count: %" PRId32 "\n", channel_count);
-+            return -1;
-+        }
 +    }
 +
 +    if ((result = p->AAudioStreamBuilder_openStream(p->builder, &p->stream)) < 0) {
