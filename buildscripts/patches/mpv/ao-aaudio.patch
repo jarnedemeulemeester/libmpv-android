@@ -125,10 +125,10 @@ index c5d2fb4b94..4c57985443 100644
  #endif
 diff --git a/audio/out/ao_aaudio.c b/audio/out/ao_aaudio.c
 new file mode 100644
-index 0000000000..691330eb1a
+index 0000000000..ccb7ba7bc2
 --- /dev/null
 +++ b/audio/out/ao_aaudio.c
-@@ -0,0 +1,422 @@
+@@ -0,0 +1,505 @@
 +/*
 + * AAudio audio output driver
 + *
@@ -151,26 +151,29 @@ index 0000000000..691330eb1a
 + */
 +
 +#include <dlfcn.h>
++#include <stdint.h>
 +
-+#include <android/api-level.h>
 +#include <aaudio/AAudio.h>
++#include <android/api-level.h>
 +
-+#include "common/common.h"
-+#include "common/msg.h"
-+#include "options/m_option.h"
 +#include "ao.h"
 +#include "audio/format.h"
++#include "common/common.h"
++#include "common/msg.h"
 +#include "internal.h"
++#include "options/m_option.h"
 +#include "osdep/timer.h"
 +
 +struct priv {
-+    AAudioStreamBuilder *builder;
 +    AAudioStream *stream;
 +
 +    int32_t device_id;
 +    aaudio_session_id_t session_id;
 +    int32_t buffer_capacity;
 +    aaudio_performance_mode_t performance_mode;
++
++    int64_t presented;
++    int64_t discarded;
 +
 +    int device_api;
 +    void *lib_handle;
@@ -181,7 +184,6 @@ index 0000000000..691330eb1a
 +#include "aaudio_functions32.inc"
 +#undef AAUDIO_FUNCTION
 +};
-+
 +
 +struct function_map {
 +    const char *symbol;
@@ -298,6 +300,21 @@ index 0000000000..691330eb1a
 +    AAUDIO_CHANNEL_9POINT1POINT4,
 +    AAUDIO_CHANNEL_9POINT1POINT6
 +};
++
++/*
++ * The values corresponds to indexes of `aaudio_chmaps`
++ *
++ * Different devices may support different number of max channels
++ * depending on what they set `FCC_LIMIT` to
++ * See https://cs.android.com/android/platform/superproject/+/android-latest-release:system/media/audio/include/system/audio.h;l=234
++ */
++static const uint8_t aaudio_max_chnums[] = {
++    MP_ARRAY_SIZE(aaudio_chmaps),
++    22, /* FCC_12 */
++    19, /* FCC_8  */
++    2,  /* FCC_2  */
++    1   /* FCC_1  */
++};
 +// clang-format on
 +
 +static bool load_lib_functions(struct ao *ao)
@@ -327,6 +344,7 @@ index 0000000000..691330eb1a
 +    }
 +    return true;
 +}
++// clang-format off
 +
 +static void error_callback(AAudioStream *stream, void *context, aaudio_result_t error)
 +{
@@ -343,29 +361,31 @@ index 0000000000..691330eb1a
 +    struct ao *ao = context;
 +    struct priv *p = ao->priv;
 +
++    aaudio_result_t result;
 +    int64_t presented, present_time;
 +    int64_t written = p->AAudioStream_getFramesWritten(stream);
 +
-+    if (p->AAudioStream_getTimestamp(stream, CLOCK_MONOTONIC, &presented, &present_time) < 0)
-+        presented = written;
++    if ((result = p->AAudioStream_getTimestamp(stream, CLOCK_MONOTONIC, &presented, &present_time)) < 0) {
++        MP_TRACE(ao, "AAudioStream_getTimestamp() returned %s\n",
++                 p->AAudio_convertResultToText(result));
++        presented = p->presented;
++    } else {
++        p->presented = presented;
++    }
 +
 +    int64_t end_time = mp_time_ns();
 +    end_time += MP_TIME_S_TO_NS(nframes) / ao->samplerate;
-+    end_time += MP_TIME_S_TO_NS(written - presented) / ao->samplerate;
++    end_time += MP_TIME_S_TO_NS(written - (presented + p->discarded)) / ao->samplerate;
 +
-+    ao_read_data(ao, &data, nframes, end_time, NULL, true, true);
++    bool eof;
++    ao_read_data(ao, &data, nframes, end_time, &eof, true, true);
 +
-+    return AAUDIO_CALLBACK_RESULT_CONTINUE;
++    return eof ? AAUDIO_CALLBACK_RESULT_STOP : AAUDIO_CALLBACK_RESULT_CONTINUE;
 +}
 +
 +static void uninit(struct ao *ao)
 +{
 +    struct priv *p = ao->priv;
-+
-+    if (p->builder) {
-+        p->AAudioStreamBuilder_delete(p->builder);
-+        p->builder = NULL;
-+    }
 +
 +    if (p->stream) {
 +        p->AAudioStream_close(p->stream);
@@ -384,10 +404,12 @@ index 0000000000..691330eb1a
 +        return -1;
 +
 +    struct priv *p = ao->priv;
-+    aaudio_result_t result;
 +
-+    if ((result = p->AAudio_createStreamBuilder(&p->builder)) < 0) {
-+        MP_ERR(ao, "Failed to create stream builder: %s\n",
++    aaudio_result_t result;
++    AAudioStreamBuilder *builder;
++
++    if ((result = p->AAudio_createStreamBuilder(&builder)) < 0) {
++        MP_ERR(ao, "AAudio_createStreamBuilder() returned %s\n",
 +               p->AAudio_convertResultToText(result));
 +        return -1;
 +    }
@@ -412,89 +434,116 @@ index 0000000000..691330eb1a
 +        format = AAUDIO_FORMAT_PCM_I16;
 +    }
 +
-+    if (p->device_api >= 32) {
-+        struct mp_chmap_sel sel = {0, .tmp = p};
-+        aaudio_channel_mask_t channel_mask = AAUDIO_CHANNEL_INVALID;
-+
-+        for (int i = 1; i < MP_ARRAY_SIZE(aaudio_chmaps); i++)
-+            mp_chmap_sel_add_map(&sel, &aaudio_chmaps[i]);
-+
-+        if (!ao_chmap_sel_adjust(ao, &sel, &ao->channels)) {
-+            MP_ERR(ao, "Failed to find channel map");
-+            return -1;
-+        }
-+
-+        for (uint8_t i = 0; i < MP_ARRAY_SIZE(aaudio_chmaps); i++) {
-+            if (mp_chmap_equals(&aaudio_chmaps[i], &ao->channels)) {
-+                channel_mask = aaudio_masks[i];
-+                break;
-+            }
-+        }
-+        assert(channel_mask != AAUDIO_CHANNEL_INVALID);
-+
-+        p->AAudioStreamBuilder_setChannelMask(p->builder, channel_mask);
-+    } else {
-+        int32_t channel_count = (int32_t) ao->channels.num;
-+        p->AAudioStreamBuilder_setChannelCount(p->builder, channel_count);
-+    }
-+
-+    p->AAudioStreamBuilder_setDeviceId(p->builder, p->device_id);
-+    p->AAudioStreamBuilder_setDirection(p->builder, AAUDIO_DIRECTION_OUTPUT);
-+    p->AAudioStreamBuilder_setSharingMode(
-+        p->builder, (ao->init_flags & AO_INIT_EXCLUSIVE) ? AAUDIO_SHARING_MODE_EXCLUSIVE :
-+                                                           AAUDIO_SHARING_MODE_SHARED);
-+    p->AAudioStreamBuilder_setFormat(p->builder, format);
-+    p->AAudioStreamBuilder_setSampleRate(p->builder, ao->samplerate);
-+    p->AAudioStreamBuilder_setErrorCallback(p->builder, error_callback, ao);
-+    p->AAudioStreamBuilder_setBufferCapacityInFrames(p->builder, p->buffer_capacity);
-+    p->AAudioStreamBuilder_setPerformanceMode(p->builder, p->performance_mode);
-+    p->AAudioStreamBuilder_setDataCallback(p->builder, data_callback, ao);
++    p->AAudioStreamBuilder_setDeviceId(builder, p->device_id);
++    p->AAudioStreamBuilder_setDirection(builder, AAUDIO_DIRECTION_OUTPUT);
++    p->AAudioStreamBuilder_setSharingMode(builder,
++                                          (ao->init_flags & AO_INIT_EXCLUSIVE)
++                                              ? AAUDIO_SHARING_MODE_EXCLUSIVE
++                                              : AAUDIO_SHARING_MODE_SHARED);
++    p->AAudioStreamBuilder_setFormat(builder, format);
++    p->AAudioStreamBuilder_setSampleRate(builder, ao->samplerate);
++    p->AAudioStreamBuilder_setErrorCallback(builder, error_callback, ao);
++    p->AAudioStreamBuilder_setBufferCapacityInFrames(builder,
++                                                     p->buffer_capacity);
++    p->AAudioStreamBuilder_setPerformanceMode(builder, p->performance_mode);
++    p->AAudioStreamBuilder_setDataCallback(builder, data_callback, ao);
 +
 +    if (p->device_api >= 28) {
-+        p->AAudioStreamBuilder_setContentType(p->builder, (ao->init_flags &
-+                                                           AO_INIT_MEDIA_ROLE_MUSIC) ?
-+                                                              AAUDIO_CONTENT_TYPE_MUSIC :
-+                                                              AAUDIO_CONTENT_TYPE_MOVIE);
-+        p->AAudioStreamBuilder_setUsage(p->builder, AAUDIO_USAGE_MEDIA);
-+        p->AAudioStreamBuilder_setSessionId(p->builder, p->session_id);
++        p->AAudioStreamBuilder_setContentType(builder,
++                                              (ao->init_flags &
++                                               AO_INIT_MEDIA_ROLE_MUSIC)
++                                                  ? AAUDIO_CONTENT_TYPE_MUSIC
++                                                  : AAUDIO_CONTENT_TYPE_MOVIE);
++        p->AAudioStreamBuilder_setUsage(builder, AAUDIO_USAGE_MEDIA);
++        p->AAudioStreamBuilder_setSessionId(builder, p->session_id);
 +    }
 +
-+    if ((result = p->AAudioStreamBuilder_openStream(p->builder, &p->stream)) < 0) {
-+        MP_ERR(ao, "Failed to open stream: %s\n", p->AAudio_convertResultToText(result));
-+        return -1;
++    if (p->device_api >= 32) {
++        uint8_t i = 0;
++        struct mp_chmap channels = ao->channels;
++
++        do {
++            struct mp_chmap_sel sel = {0, .tmp = p};
++            aaudio_channel_mask_t channel_mask = AAUDIO_CHANNEL_INVALID;
++
++            for (int j = 1; j < aaudio_max_chnums[i]; j++)
++                mp_chmap_sel_add_map(&sel, &aaudio_chmaps[j]);
++
++            if (!ao_chmap_sel_adjust(ao, &sel, &channels)) {
++                MP_ERR(ao, "Failed to find channel map\n");
++                goto err;
++            }
++
++            for (uint8_t j = 0; j < aaudio_max_chnums[i]; j++) {
++                if (mp_chmap_equals(&aaudio_chmaps[j], &channels)) {
++                    channel_mask = aaudio_masks[j];
++                    break;
++                }
++            }
++            assert(channel_mask != AAUDIO_CHANNEL_INVALID);
++
++            p->AAudioStreamBuilder_setChannelMask(builder, channel_mask);
++        } while (i++ < MP_ARRAY_SIZE(aaudio_max_chnums) &&
++                 (result = p->AAudioStreamBuilder_openStream(builder, &p->stream)) ==
++                     AAUDIO_ERROR_OUT_OF_RANGE);
++
++        ao->channels = channels;
++    } else {
++        result = p->AAudioStreamBuilder_openStream(builder, &p->stream);
++    }
++
++    if (result < 0) {
++        MP_ERR(ao, "AAudioStreamBuilder_openStream() returned %s\n",
++               p->AAudio_convertResultToText(result));
++        goto err;
++    }
++
++    if (p->device_api < 32) {
++        int32_t channel_count = p->AAudioStream_getChannelCount(p->stream);
++
++        if (channel_count >= MP_ARRAY_SIZE(aaudio_default_chmaps) ||
++            (ao->channels = aaudio_default_chmaps[channel_count]).num == 0) {
++            MP_ERR(ao, "Unknown layout for channel count: %" PRId32 "\n",
++                   channel_count);
++            goto err;
++        }
 +    }
 +
 +    ao->device_buffer = p->AAudioStream_getBufferCapacityInFrames(p->stream);
-+
 +    return 1;
++
++err:
++    p->AAudioStreamBuilder_delete(builder);
++    return -1;
 +}
 +
 +static void start(struct ao *ao)
 +{
 +    struct priv *p = ao->priv;
 +
-+    aaudio_result_t result = AAUDIO_OK;
-+    if (!p->stream) {
-+        if ((result = p->AAudioStreamBuilder_openStream(p->builder, &p->stream)) >= 0)
-+            ao->device_buffer = p->AAudioStream_getBufferCapacityInFrames(p->stream);
++    aaudio_result_t result;
++    p->discarded = p->AAudioStream_getFramesWritten(p->stream) - p->presented;
++
++    if ((result = p->AAudioStream_requestStart(p->stream)) < 0) {
++        MP_ERR(ao, "AAudioStream_requestStart() returned %s\n",
++               p->AAudio_convertResultToText(result));
++        return ao_request_reload(ao);
 +    }
-+
-+    if (result >= 0)
-+        result = p->AAudioStream_requestStart(p->stream);
-+
-+    if (result < 0)
-+        MP_ERR(ao, "Failed to start stream: %s\n", p->AAudio_convertResultToText(result));
 +}
 +
 +static bool set_pause(struct ao *ao, bool paused)
 +{
 +    struct priv *p = ao->priv;
 +
-+    aaudio_result_t result = paused ? p->AAudioStream_requestPause(p->stream) :
-+                                      p->AAudioStream_requestStart(p->stream);
++    aaudio_result_t result = paused
++                    ? p->AAudioStream_requestPause(p->stream)
++                    : p->AAudioStream_requestStart(p->stream);
 +
 +    if (result < 0) {
-+        MP_ERR(ao, "Failed to pause stream: %s\n", p->AAudio_convertResultToText(result));
++        MP_ERR(ao, "AAudioStream_request%s() returned %s\n",
++               paused ? "Pause" : "Start",
++               p->AAudio_convertResultToText(result));
++        ao_request_reload(ao);
 +        return false;
 +    }
 +
@@ -505,9 +554,42 @@ index 0000000000..691330eb1a
 +{
 +    struct priv *p = ao->priv;
 +
-+    if (p->stream) {
-+        p->AAudioStream_close(p->stream);
-+        p->stream = NULL;
++    aaudio_result_t result;
++    aaudio_stream_state_t state = p->AAudioStream_getState(p->stream);
++
++    switch (state) {
++        case AAUDIO_STREAM_STATE_STARTING:
++        case AAUDIO_STREAM_STATE_STARTED:
++        case AAUDIO_STREAM_STATE_STOPPING:
++        case AAUDIO_STREAM_STATE_PAUSING:
++        case AAUDIO_STREAM_STATE_FLUSHING:
++            if ((result = p->AAudioStream_waitForStateChange(p->stream,
++                                AAUDIO_STREAM_STATE_PAUSING, &state, INT64_MAX)) < 0) {
++                MP_ERR(ao, "AAudioStream_waitForStateChange() returned %s\n",
++                       p->AAudio_convertResultToText(result));
++                return ao_request_reload(ao);
++            }
++    }
++
++    if (state != AAUDIO_STREAM_STATE_PAUSED) {
++        if ((result = p->AAudioStream_requestPause(p->stream)) < 0) {
++            MP_ERR(ao, "AAudioStream_requestPause() %s\n",
++                   p->AAudio_convertResultToText(result));
++            return ao_request_reload(ao);
++        }
++
++        if ((result = p->AAudioStream_waitForStateChange(p->stream,
++                            AAUDIO_STREAM_STATE_PAUSING, &state, INT64_MAX)) < 0) {
++            MP_ERR(ao, "AAudioStream_waitForStateChange() returned %s\n",
++                   p->AAudio_convertResultToText(result));
++            return ao_request_reload(ao);
++        }
++    }
++
++    if ((result = p->AAudioStream_requestFlush(p->stream)) < 0) {
++        MP_ERR(ao, "AAudioStream_requestFlush() returned %s\n",
++               p->AAudio_convertResultToText(result));
++        return ao_request_reload(ao);
 +    }
 +}
 +
@@ -529,7 +611,8 @@ index 0000000000..691330eb1a
 +        .session_id = AAUDIO_SESSION_ID_NONE,
 +        .buffer_capacity = AAUDIO_UNSPECIFIED,
 +        .performance_mode = AAUDIO_PERFORMANCE_MODE_NONE,
-+        .builder = NULL,
++        .presented = 0,
++        .discarded = 0,
 +        .stream = NULL,
 +        .lib_handle = NULL
 +    },
@@ -551,7 +634,6 @@ index 0000000000..691330eb1a
 +                {"power-saving", AAUDIO_PERFORMANCE_MODE_POWER_SAVING})},
 +            {0}},
 +};
-\ No newline at end of file
 diff --git a/meson.build b/meson.build
 index 7572769e0e..c9f082fa11 100644
 --- a/meson.build
