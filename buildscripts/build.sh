@@ -56,6 +56,9 @@ loadarch () {
 setup_prefix () {
 	if [ ! -d "$prefix_dir" ]; then
 		mkdir -p "$prefix_dir"
+		mkdir -p "$prefix_dir/lib"
+    mkdir -p "$prefix_dir/lib/pkgconfig"
+    mkdir -p "$prefix_dir/include"
 		# enforce flat structure (/usr/local -> /)
 		ln -s . "$prefix_dir/usr"
 		ln -s . "$prefix_dir/local"
