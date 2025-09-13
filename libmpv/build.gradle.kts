@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.maven.publish)
 }
 
@@ -31,10 +32,6 @@ android {
             version = "4.1.1"
         }
     }
-}
-
-dependencies {
-    implementation(libs.androidx.annotation)
 }
 
 mavenPublishing {

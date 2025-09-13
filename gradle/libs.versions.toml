@@ -1,11 +1,9 @@
 [versions]
 android-plugin = "8.13.0"
-androidx-annotation = "1.9.1"
+kotlin = "2.2.20"
 maven-publish = "0.34.0"
-
-[libraries]
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
