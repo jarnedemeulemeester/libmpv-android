@@ -32,6 +32,11 @@ android {
             version = "4.1.1"
         }
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 mavenPublishing {
