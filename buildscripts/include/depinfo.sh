@@ -10,7 +10,7 @@ v_cmake=4.1.1
 
 v_lua=5.2.4
 v_libass=0.17.4
-v_harfbuzz=11.5.0
+v_harfbuzz=12.0.0
 v_fribidi=1.0.16
 v_freetype=2-14-1
 v_mbedtls=3.6.4
