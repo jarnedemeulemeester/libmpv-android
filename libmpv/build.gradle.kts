@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "dev.jdtech.mpv"
     compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    buildToolsVersion = "36.1.0"
     ndkVersion = "28.2.13676358"
 
     defaultConfig {
