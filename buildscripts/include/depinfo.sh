@@ -9,6 +9,7 @@ v_sdk_build_tools=36.1.0
 v_cmake=4.1.1
 
 v_lua=5.2.4
+v_libunibreak=6.1
 v_libass=0.17.4
 v_harfbuzz=12.1.0
 v_fribidi=1.0.16
@@ -29,7 +30,8 @@ dep_ffmpeg=(mbedtls dav1d)
 dep_freetype2=()
 dep_fribidi=()
 dep_harfbuzz=()
-dep_libass=(freetype fribidi harfbuzz)
+dep_libunibreak=()
+dep_libass=(freetype fribidi harfbuzz libunibreak)
 dep_lua=()
 dep_libplacebo=()
 dep_mpv=(ffmpeg libass lua libplacebo)

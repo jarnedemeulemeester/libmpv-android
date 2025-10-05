@@ -24,6 +24,13 @@ mkdir -p deps && cd deps
 # harfbuzz
 [ ! -d harfbuzz ] && git clone --depth 1 --branch $v_harfbuzz https://github.com/harfbuzz/harfbuzz.git harfbuzz
 
+# libunibreak
+if [ ! -d libunibreak ]; then
+	mkdir libunibreak
+	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_libunibreak//./_}/libunibreak-${v_libunibreak}.tar.gz -O - | \
+		tar -xz -C libunibreak --strip-components=1
+fi
+
 # libass
 [ ! -d libass ] && git clone --depth 1 --branch $v_libass https://github.com/libass/libass.git libass
 
