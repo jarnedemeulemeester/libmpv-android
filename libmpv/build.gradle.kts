@@ -10,7 +10,7 @@ android {
     namespace = "dev.jdtech.mpv"
     compileSdk = 36
     buildToolsVersion = "36.1.0"
-    ndkVersion = "28.2.13676358"
+    ndkVersion = "29.0.14206865"
 
     defaultConfig {
         minSdk = 26
@@ -29,7 +29,7 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
-            version = "4.1.1"
+            version = "4.1.2"
         }
     }
 
