@@ -41,6 +41,14 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
+# shaderc
+if [ ! -d shaderc ]; then
+	git clone --depth 1 --branch v$v_shaderc --recursive https://github.com/google/shaderc shaderc
+	cd shaderc/utils
+	./git-sync-deps
+	cd ../..
+fi
+
 [ ! -d libplacebo ] && git clone --depth 1 --branch v$v_libplacebo --recurse-submodules https://code.videolan.org/videolan/libplacebo.git libplacebo
 
 # mpv

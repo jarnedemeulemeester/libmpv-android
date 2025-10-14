@@ -15,6 +15,7 @@ v_harfbuzz=12.1.0
 v_fribidi=1.0.16
 v_freetype=2.14.1
 v_mbedtls=3.6.4
+v_shaderc=2025.3
 v_libplacebo=7.351.0
 v_dav1d=1.5.1
 v_ffmpeg=8.0
@@ -33,7 +34,8 @@ dep_harfbuzz=()
 dep_libunibreak=()
 dep_libass=(freetype fribidi harfbuzz libunibreak)
 dep_lua=()
-dep_libplacebo=()
+dep_shaderc=()
+dep_libplacebo=(shaderc)
 dep_mpv=(ffmpeg libass lua libplacebo)
 dep_mpv_android=(mpv)
 
