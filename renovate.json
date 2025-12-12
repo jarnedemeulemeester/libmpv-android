@@ -1,0 +1,99 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "customManagers": [    
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_lua=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "lua/lua",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_libunibreak=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "adah1972/libunibreak",
+      "extractVersionTemplate": "^libunibreak_?(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)_(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_libass=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "libass/libass"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_harfbuzz=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "harfbuzz/harfbuzz"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_fribidi=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "fribidi/fribidi",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_freetype=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.freedesktop.org",
+      "packageNameTemplate": "freetype/freetype",
+      "extractVersionTemplate": "^VER-?(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)-(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_mbedtls=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "Mbed-TLS/mbedtls",
+      "extractVersionTemplate": "^mbedtls-?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_libplacebo=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://code.videolan.org",
+      "packageNameTemplate": "videolan/libplacebo",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_dav1d=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://code.videolan.org",
+      "packageNameTemplate": "videolan/dav1d"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_ffmpeg=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "FFmpeg/FFmpeg",
+      "extractVersionTemplate": "^n?(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?<prerelease>[^.-]+)?$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_mpv=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mpv-player/mpv",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    }
+  ]
+}
