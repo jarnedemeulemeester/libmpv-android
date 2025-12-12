@@ -16,7 +16,7 @@ mkdir -p deps && cd deps
 [ ! -d ffmpeg ] && git clone --depth 1 --branch n$v_ffmpeg https://github.com/FFmpeg/FFmpeg.git ffmpeg
 
 # freetype2
-[ ! -d freetype ] && git clone --depth 1 --branch VER-${v_freetype//./-} https://gitlab.freedesktop.org/freetype/freetype.git freetype
+[ ! -d freetype ] && git clone --depth 1 --branch VER-$v_freetype https://gitlab.freedesktop.org/freetype/freetype.git freetype
 
 # fribidi
 [ ! -d fribidi ] && git clone --depth 1 --branch v$v_fribidi https://github.com/fribidi/fribidi.git fribidi
@@ -27,7 +27,7 @@ mkdir -p deps && cd deps
 # libunibreak
 if [ ! -d libunibreak ]; then
 	mkdir libunibreak
-	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_libunibreak//./_}/libunibreak-${v_libunibreak}.tar.gz -O - | \
+	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_libunibreak}/libunibreak-${v_libunibreak//_/.}.tar.gz -O - | \
 		tar -xz -C libunibreak --strip-components=1
 fi
 
