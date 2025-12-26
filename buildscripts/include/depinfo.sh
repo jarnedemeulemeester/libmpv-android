@@ -11,14 +11,14 @@ v_cmake=4.1.2
 v_lua=5.2.4
 v_libunibreak=6.1
 v_libass=0.17.4
-v_harfbuzz=12.1.0
+v_harfbuzz=12.2.0
 v_fribidi=1.0.16
 v_freetype=2.14.1
-v_mbedtls=3.6.4
+v_mbedtls=3.6.5
 v_libplacebo=7.351.0
-v_dav1d=1.5.1
-v_ffmpeg=8.0
-v_mpv=0.40.0
+v_dav1d=1.5.2
+v_ffmpeg=8.0.1
+v_mpv=0.41.0
 
 
 ## Dependency tree

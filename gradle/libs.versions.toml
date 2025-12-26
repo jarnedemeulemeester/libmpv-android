@@ -1,7 +1,7 @@
 [versions]
-android-plugin = "8.13.0"
-kotlin = "2.2.20"
-maven-publish = "0.34.0"
+android-plugin = "8.13.2"
+kotlin = "2.3.0"
+maven-publish = "0.35.0"
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-plugin" }

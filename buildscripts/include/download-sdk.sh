@@ -16,8 +16,7 @@ if [ "$os" == "linux" ]; then
 		apt-get -v &>/dev/null && {
 		    sudo apt-get update;
 			sudo apt-get install -y autoconf pkg-config libtool ninja-build nasm \
-			python3-pip python3-setuptools unzip;
-			python3 -m pip install meson jsonschema jinja2; }
+			python3-pip python3-setuptools unzip meson python3-jinja2; }
 	fi
 
 	if ! javac -version &>/dev/null; then
