@@ -1,6 +1,5 @@
 [versions]
-android-plugin = "9.0.0"
-kotlin = "2.3.10"
+android-plugin = "9.0.1"
 maven-publish = "0.36.0"
 
 [plugins]
