@@ -1,0 +1,22 @@
+From c93aa134ab62365ce1177efff99b8e1e66a818e7 Mon Sep 17 00:00:00 2001
+From: moi15moi <moi15moismokerlolilol@gmail.com>
+Date: Tue, 17 Feb 2026 21:18:27 -0500
+Subject: [PATCH] opengl/util: fix sync object leak
+
+Fix https://github.com/mpv-android/mpv-android/issues/977 and https://github.com/mpv-player/mpv/issues/12708
+---
+ src/opengl/utils.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/opengl/utils.c b/src/opengl/utils.c
+index d96a3e74a..81be67af0 100644
+--- a/src/opengl/utils.c
++++ b/src/opengl/utils.c
+@@ -48,6 +48,7 @@ void gl_poll_callbacks(pl_gpu gpu)
+         case GL_ALREADY_SIGNALED:
+         case GL_CONDITION_SATISFIED:
+             PL_ARRAY_REMOVE_AT(p->callbacks, 0);
++            gl->DeleteSync(cb.sync);
+             cb.callback(cb.priv);
+             continue;
+ 
