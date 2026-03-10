@@ -21,5 +21,6 @@ UTIL_EXTERN jmethodID mpv_MPVLib_eventProperty_S,
         mpv_MPVLib_eventProperty_Sl,
         mpv_MPVLib_eventProperty_Sd,
         mpv_MPVLib_eventProperty_SS,
+        mpv_MPVLib_endFile,
         mpv_MPVLib_event,
         mpv_MPVLib_logMessage_SiS;
