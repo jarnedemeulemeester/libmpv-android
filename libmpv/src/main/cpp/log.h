@@ -12,9 +12,16 @@
 #define ALOGV(...) (void)0
 #endif
 
-__attribute__((noreturn)) void die(const char *msg);
+void die(const char *msg);
 
 #define CHECK_MPV_INIT() do { \
-	if (__builtin_expect(!g_mpv, 0)) \
+	if (__builtin_expect(!g_mpv, 0)) { \
         die("libmpv is not initialized"); \
-	} while (0)
+        return; \
+	} } while (0)
+
+#define CHECK_MPV_INIT_RET(val) do { \
+	if (__builtin_expect(!g_mpv, 0)) { \
+        die("libmpv is not initialized"); \
+        return val; \
+	} } while (0)

@@ -49,26 +49,36 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 jni_func(void, create, jobject appctx) {
     prepare_environment(env, appctx);
 
-    if (g_mpv)
+    if (g_mpv) {
         die("mpv is already initialized");
+        return;
+    }
 
     g_mpv = mpv_create();
-    if (!g_mpv)
+    if (!g_mpv) {
         die("context init failed");
+        return;
+    }
 
     mpv_request_log_messages(g_mpv, "v");
 }
 
 jni_func(void, init) {
-    if (!g_mpv)
+    if (!g_mpv) {
         die("mpv is not created");
+        return;
+    }
 
-    if (mpv_initialize(g_mpv) < 0)
+    if (mpv_initialize(g_mpv) < 0) {
         die("mpv init failed");
+        return;
+    }
 
     g_event_thread_request_exit = false;
-    if (pthread_create(&event_thread_id, NULL, event_thread, NULL) != 0)
+    if (pthread_create(&event_thread_id, NULL, event_thread, NULL) != 0) {
         die("thread create failed");
+        return;
+    }
     pthread_setname_np(event_thread_id, "event_thread");
 }
 
@@ -92,8 +102,10 @@ jni_func(void, command, jobjectArray jarray) {
 
     const char *arguments[128] = { 0 };
     int len = env->GetArrayLength(jarray);
-    if (len >= ARRAYLEN(arguments))
+    if (len >= ARRAYLEN(arguments)) {
         die("too many command arguments");
+        return;
+    }
 
     for (int i = 0; i < len; ++i)
         arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);

@@ -69,8 +69,10 @@ static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg) {
 void *event_thread(void *arg) {
     JNIEnv *env = NULL;
     acquire_jni_env(g_vm, &env);
-    if (!env)
-        die("failed to acquire java env");
+    if (!env) {
+        ALOGE("failed to acquire java env");
+        return NULL;
+    }
 
     while (true) {
         mpv_event *mp_event;

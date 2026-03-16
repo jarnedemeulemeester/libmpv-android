@@ -23,7 +23,7 @@ extern "C" {
 }
 
 jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
-    CHECK_MPV_INIT();
+    CHECK_MPV_INIT_RET(0);
 
     const char *option = env->GetStringUTFChars(joption, NULL);
     const char *value = env->GetStringUTFChars(jvalue, NULL);
@@ -37,7 +37,7 @@ jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
 }
 
 static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {
-    CHECK_MPV_INIT();
+    CHECK_MPV_INIT_RET(-1);
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int result = mpv_get_property(g_mpv, prop, format, output);
@@ -49,7 +49,7 @@ static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format
 }
 
 static int common_set_property(JNIEnv *env, jstring jproperty, mpv_format format, void *value) {
-    CHECK_MPV_INIT();
+    CHECK_MPV_INIT_RET(-1);
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int result = mpv_set_property(g_mpv, prop, format, value);

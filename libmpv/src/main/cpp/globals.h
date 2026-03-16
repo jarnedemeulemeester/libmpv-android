@@ -1,6 +1,8 @@
 #pragma once
 
+#include <jni.h>
 #include <atomic>
+#include <mpv/client.h>
 
 extern JavaVM *g_vm;
 extern mpv_handle *g_mpv;

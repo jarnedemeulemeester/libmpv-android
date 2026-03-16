@@ -17,8 +17,10 @@ jni_func(void, attachSurface, jobject surface_) {
     CHECK_MPV_INIT();
 
     surface = env->NewGlobalRef(surface_);
-    if (!surface)
+    if (!surface) {
         die("invalid surface provided");
+        return;
+    }
     int64_t wid = reinterpret_cast<intptr_t>(surface);
     int result = mpv_set_option(g_mpv, "wid", MPV_FORMAT_INT64, &wid);
     if (result < 0)
