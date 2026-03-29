@@ -60,8 +60,7 @@
       "datasourceTemplate": "gitlab-tags",
       "registryUrlTemplate": "https://gitlab.gnome.org",
       "packageNameTemplate": "GNOME/libxml2",
-      "extractVersionTemplate": "^v?(?<version>.*)$",
-      "versioningTemplate": "regex:^(?<major>\\d+)-(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+      "extractVersionTemplate": "^v?(?<version>.*)$"
     },
     {
       "customType": "regex",
