@@ -48,7 +48,6 @@ jobs:
       - name: Build
         working-directory: ./buildscripts
         run: ./build.sh
-      - uses: actions/upload-artifact@v4
 
       - uses: actions/upload-artifact@v5
         with:
