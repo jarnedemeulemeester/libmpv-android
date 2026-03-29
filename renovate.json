@@ -69,9 +69,7 @@
       "matchStrings": ["v_fontconfig=(?<currentValue>.*?)\\n"],
       "datasourceTemplate": "gitlab-tags",
       "registryUrlTemplate": "https://gitlab.freedesktop.org",
-      "packageNameTemplate": "fontconfig/fontconfig",
-      "extractVersionTemplate": "^(?<version>.*)$",
-      "versioningTemplate": "regex:^(?<major>\\d+)-(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+      "packageNameTemplate": "fontconfig/fontconfig"
     },
     {
       "customType": "regex",
