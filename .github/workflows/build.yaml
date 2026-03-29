@@ -12,29 +12,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+
       - name: Setup Java JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
+
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Symlink SDK
         working-directory: ./buildscripts
         run: |
           mkdir sdk
           ln -s ${ANDROID_HOME} ./sdk/android-sdk-linux
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf pkgconf libtool ninja-build python3-pip python3-jinja2 gperf nasm
+          sudo pip3 install --break-system-packages meson
+
       - name: Download dependencies
         working-directory: ./buildscripts
+        env:
+          IN_CI: 1
         run: ./download.sh
+
       - name: Apply patches
         working-directory: ./buildscripts
         run: ./patch.sh
+
       - name: Build
         working-directory: ./buildscripts
         run: ./build.sh
       - uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v5
         with:
           name: libmpv-release.aar
           path: ./libmpv/build/outputs/aar/libmpv-release.aar

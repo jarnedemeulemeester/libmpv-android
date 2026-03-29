@@ -31,6 +31,12 @@ if [ ! -d libunibreak ]; then
 		tar -xz -C libunibreak --strip-components=1
 fi
 
+# libxml2
+[ ! -d libxml2 ] && git clone --depth 1 --branch v$v_libxml2 https://gitlab.gnome.org/GNOME/libxml2.git libxml2
+
+# fontconfig
+[ ! -d fontconfig ] && git clone --depth 1 --branch $v_fontconfig https://gitlab.freedesktop.org/fontconfig/fontconfig.git fontconfig
+
 # libass
 [ ! -d libass ] && git clone --depth 1 --branch $v_libass https://github.com/libass/libass.git libass
 
