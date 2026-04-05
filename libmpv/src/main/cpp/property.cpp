@@ -100,19 +100,19 @@ jni_func(jstring, nativeGetPropertyString, jlong instance, jstring jproperty) {
 
 jni_func(void, nativeSetPropertyInt, jlong instance, jstring jproperty, jint jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
-    int64_t value = env->CallIntMethod(jvalue, java_Integer_intValue);
+    int64_t value = static_cast<int64_t>(jvalue);
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_INT64, &value);
 }
 
 jni_func(void, nativeSetPropertyDouble, jlong instance, jstring jproperty, jdouble jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
-    double value = env->CallDoubleMethod(jvalue, java_Double_doubleValue);
+    double value = static_cast<double>(jvalue);
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_DOUBLE, &value);
 }
 
 jni_func(void, nativeSetPropertyBoolean, jlong instance, jstring jproperty, jboolean jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
-    int value = env->CallBooleanMethod(jvalue, java_Boolean_booleanValue);
+    int value = jvalue == JNI_TRUE ? 1 : 0;
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_FLAG, &value);
 }
 
