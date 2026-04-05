@@ -29,15 +29,14 @@ extern "C" {
     jni_func(void, nativeCommand, jlong instance, jobjectArray jarray);
 };
 
-static void prepare_environment(JNIEnv *env, jobject appctx, MPVInstance* instance) {
+static void prepare_environment(JNIEnv *env, MPVInstance* instance) {
     setlocale(LC_NUMERIC, "C");
 
-    if (!env->GetJavaVM(&instance->vm) && instance->vm)
+    if (env->GetJavaVM(&instance->vm) == JNI_OK && instance->vm)
         av_jni_set_java_vm(instance->vm, nullptr);
 
-    jobject global_appctx = env->NewGlobalRef(appctx);
-    if (global_appctx)
-        av_jni_set_android_app_ctx(global_appctx, nullptr);
+    if (instance->appCtx)
+        av_jni_set_android_app_ctx(instance->appCtx, nullptr);
 
     if (!instance->methods_initialized) {
         instance->methods_initialized = init_methods_cache(env, instance->javaObject);
@@ -48,7 +47,8 @@ jni_func(jlong, nativeCreate, jobject thiz, jobject appctx) {
     auto instance = new MPVInstance();
     instance->event_thread_request_exit = false;
     instance->javaObject = env->NewGlobalRef(thiz);
-    prepare_environment(env, appctx, instance);
+    instance->appCtx = env->NewGlobalRef(appctx);
+    prepare_environment(env, instance);
 
     instance->mpv = mpv_create();
     if (!instance->mpv) {
@@ -77,7 +77,7 @@ jni_func(void, nativeInit, jlong instance) {
 jni_func(void, nativeDestroy, jlong instance) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
     if (!mpv_instance->mpv) {
-        ALOGV("mpv destroy called but it's already destroyed");
+        ALOGV("Cannot destroy mpv: mpv is not initialized");
         return;
     }
 
@@ -90,24 +90,39 @@ jni_func(void, nativeDestroy, jlong instance) {
         env->DeleteGlobalRef(mpv_instance->surface);
         mpv_instance->surface = nullptr;
     }
+    env->DeleteGlobalRef(mpv_instance->appCtx);
     env->DeleteGlobalRef(mpv_instance->javaObject);
     delete mpv_instance;
 }
 
 jni_func(void, nativeCommand, jlong instance, jobjectArray jarray) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
-    const char *arguments[128] = { 0 };
-    int len = env->GetArrayLength(jarray);
-    if (!mpv_instance->mpv)
-        die("Cannot run command: mpv is not initialized");
-    if (len >= ARRAYLEN(arguments))
-        die("too many command arguments");
+    if (!mpv_instance->mpv) {
+        ALOGE("Cannot run command: mpv is not initialized");
+        return;
+    }
 
-    for (int i = 0; i < len; ++i)
-        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), nullptr);
+    const char *arguments[128] = { nullptr };
+    jstring stringRefs[128] = { nullptr };
+
+    int len = env->GetArrayLength(jarray);
+
+    if (len >= ARRAYLEN(arguments)) {
+        ALOGE("Cannot run command: too many arguments");
+        return;
+    }
+
+    for (int i = 0; i < len; ++i) {
+        stringRefs[i] = (jstring)env->GetObjectArrayElement(jarray, i);
+        arguments[i] = env->GetStringUTFChars(stringRefs[i], nullptr);
+    }
 
     mpv_command(mpv_instance->mpv, arguments);
 
-    for (int i = 0; i < len; ++i)
-        env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
+    for (int i = 0; i < len; ++i) {
+        if (stringRefs[i]) {
+            env->ReleaseStringUTFChars(stringRefs[i], arguments[i]);
+            env->DeleteLocalRef(stringRefs[i]);
+        }
+    }
 }

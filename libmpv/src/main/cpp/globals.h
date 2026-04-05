@@ -13,6 +13,7 @@ struct MPVInstance {
     std::atomic<bool> event_thread_request_exit;
 
     jobject javaObject;
+    jobject appCtx;
     jobject surface;
 
     bool methods_initialized;
