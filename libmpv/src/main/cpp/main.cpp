@@ -71,7 +71,7 @@ jni_func(void, nativeInit, jlong instance) {
     mpv_instance->event_thread_request_exit = false;
     if (pthread_create(&mpv_instance->event_thread_id, nullptr, event_thread, mpv_instance) != 0)
         die("thread create failed");
-    pthread_setname_np(event_thread_id, "event_thread");
+    pthread_setname_np(mpv_instance->event_thread_id, "event_thread");
 }
 
 jni_func(void, nativeDestroy, jlong instance) {

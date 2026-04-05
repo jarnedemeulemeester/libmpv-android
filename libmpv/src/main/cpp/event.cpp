@@ -106,5 +106,5 @@ void *event_thread(void *arg) {
 
     instance->vm->DetachCurrentThread();
 
-    return nullptr
+    return nullptr;
 }
