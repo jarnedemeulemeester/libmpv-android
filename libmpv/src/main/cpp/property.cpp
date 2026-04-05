@@ -10,12 +10,12 @@
 extern "C" {
     jni_func(jint, nativeSetOptionString, jlong instance, jstring option, jstring value);
 
-    jni_func(jobject, nativeGetPropertyInt, jlong instance, jstring property);
-    jni_func(void, nativeSetPropertyInt, jlong instance, jstring property, jobject value);
-    jni_func(jobject, nativeGetPropertyDouble, jlong instance, jstring property);
-    jni_func(void, nativeSetPropertyDouble, jlong instance, jstring property, jobject value);
-    jni_func(jobject, nativeGetPropertyBoolean, jlong instance, jstring property);
-    jni_func(void, nativeSetPropertyBoolean, jlong instance, jstring property, jobject value);
+    jni_func(jobject, nativeGetPropertyInt, jlong instance, jstring jproperty);
+    jni_func(void, nativeSetPropertyInt, jlong instance, jstring jproperty, jint jvalue);
+    jni_func(jobject, nativeGetPropertyDouble, jlong instance, jstring jproperty);
+    jni_func(void, nativeSetPropertyDouble, jlong instance, jstring jproperty, jdouble jvalue);
+    jni_func(jobject, nativeGetPropertyBoolean, jlong instance, jstring jproperty);
+    jni_func(void, nativeSetPropertyBoolean, jlong instance, jstring jproperty, jboolean jvalue);
     jni_func(jstring, nativeGetPropertyString, jlong instance, jstring jproperty);
     jni_func(void, nativeSetPropertyString, jlong instance, jstring jproperty, jstring jvalue);
 
@@ -98,19 +98,19 @@ jni_func(jstring, nativeGetPropertyString, jlong instance, jstring jproperty) {
     return jvalue;
 }
 
-jni_func(void, nativeSetPropertyInt, jlong instance, jstring jproperty, jobject jvalue) {
+jni_func(void, nativeSetPropertyInt, jlong instance, jstring jproperty, jint jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
     int64_t value = env->CallIntMethod(jvalue, java_Integer_intValue);
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_INT64, &value);
 }
 
-jni_func(void, nativeSetPropertyDouble, jlong instance, jstring jproperty, jobject jvalue) {
+jni_func(void, nativeSetPropertyDouble, jlong instance, jstring jproperty, jdouble jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
     double value = env->CallDoubleMethod(jvalue, java_Double_doubleValue);
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_DOUBLE, &value);
 }
 
-jni_func(void, nativeSetPropertyBoolean, jlong instance, jstring jproperty, jobject jvalue) {
+jni_func(void, nativeSetPropertyBoolean, jlong instance, jstring jproperty, jboolean jvalue) {
     auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
     int value = env->CallBooleanMethod(jvalue, java_Boolean_booleanValue);
     common_set_property(env, mpv_instance->mpv, jproperty, MPV_FORMAT_FLAG, &value);
