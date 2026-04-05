@@ -3,55 +3,114 @@ package dev.jdtech.mpv
 import android.content.Context
 import android.view.Surface
 
-// Wrapper for native library
-
 @Suppress("unused")
-object MPVLib {
-    init {
-        val libs = arrayOf("mpv", "player")
-        for (lib in libs) {
-            System.loadLibrary(lib)
+class MPVLib {
+    private var nativeInstance: Long = 0
+    private val observers = mutableListOf<EventObserver>()
+    private val logObservers = mutableListOf<LogObserver>()
+
+    companion object {
+        init {
+            val libs = arrayOf("mpv", "player")
+            for (lib in libs) {
+                System.loadLibrary(lib)
+            }
         }
     }
 
-    external fun create(appctx: Context)
-    external fun init()
-    external fun destroy()
-    external fun attachSurface(surface: Surface)
-    external fun detachSurface()
+    fun create(appctx: Context) {
+        nativeInstance = nativeCreate(this, appctx)
+    }
+    private external fun nativeCreate(thiz: MPVLib, appctx: Context): Long
 
-    external fun command(cmd: Array<out String>)
+    fun init() {
+        nativeInit(nativeInstance)
+    }
+    private external fun nativeInit(instance: Long)
 
-    external fun setOptionString(name: String, value: String): Int
+    fun destroy() {
+        nativeDestroy(nativeInstance)
+        nativeInstance = 0
+    }
+    private external fun nativeDestroy(instance: Long)
 
-    external fun getPropertyInt(property: String): Int?
-    external fun setPropertyInt(property: String, value: Int)
-    external fun getPropertyDouble(property: String): Double?
-    external fun setPropertyDouble(property: String, value: Double)
-    external fun getPropertyBoolean(property: String): Boolean?
-    external fun setPropertyBoolean(property: String, value: Boolean)
-    external fun getPropertyString(property: String): String?
-    external fun setPropertyString(property: String, value: String)
+    fun attachSurface(surface: Surface) {
+        nativeAttachSurface(nativeInstance, surface)
+    }
+    private external fun nativeAttachSurface(instance: Long, surface: Surface)
 
-    external fun observeProperty(property: String, format: Int)
+    fun detachSurface() {
+        nativeDetachSurface(nativeInstance)
+    }
+    private external fun nativeDetachSurface(instance: Long)
 
-    private val observers = mutableListOf<EventObserver>()
+    fun command(cmd: Array<String>) {
+        nativeCommand(nativeInstance, cmd)
+    }
+    private external fun nativeCommand(instance: Long, cmd: Array<String>)
 
-    @JvmStatic
+    fun setOptionString(name: String, value: String): Int {
+        return nativeSetOptionString(nativeInstance, name, value)
+    }
+    private external fun nativeSetOptionString(instance: Long, name: String, value: String): Int
+
+    fun getPropertyInt(property: String): Int? {
+        return nativeGetPropertyInt(nativeInstance, property)
+    }
+    private external fun nativeGetPropertyInt(instance: Long, property: String): Int?
+
+    fun setPropertyInt(property: String, value: Int) {
+        nativeSetPropertyInt(nativeInstance, property, value)
+    }
+    private external fun nativeSetPropertyInt(instance: Long, property: String, value: Int): Int
+
+    fun getPropertyDouble(property: String): Double? {
+        return nativeGetPropertyDouble(nativeInstance, property)
+    }
+    private external fun nativeGetPropertyDouble(instance: Long, property: String): Double?
+
+    fun setPropertyDouble(property: String, value: Double) {
+        nativeSetPropertyDouble(nativeInstance, property, value)
+    }
+    private external fun nativeSetPropertyDouble(instance: Long, property: String, value: Double)
+
+    fun getPropertyBoolean(property: String): Boolean? {
+        return nativeGetPropertyBoolean(nativeInstance, property)
+    }
+    private external fun nativeGetPropertyBoolean(instance: Long, property: String): Boolean?
+
+    fun setPropertyBoolean(property: String, value: Boolean) {
+        nativeSetPropertyBoolean(nativeInstance, property, value)
+    }
+    private external fun nativeSetPropertyBoolean(instance: Long, property: String, value: Boolean)
+
+    fun getPropertyString(property: String): String? {
+        return nativeGetPropertyString(nativeInstance, property)
+    }
+    private external fun nativeGetPropertyString(instance: Long, property: String): String?
+
+    fun setPropertyString(property: String, value: String) {
+        nativeSetPropertyString(nativeInstance, property, value)
+    }
+    private external fun nativeSetPropertyString(instance: Long, property: String, value: String)
+
+    fun observeProperty(property: String, format: Int) {
+        nativeObserveProperty(nativeInstance, property, format)
+    }
+    private external fun nativeObserveProperty(instance: Long, property: String, format: Int)
+
     fun addObserver(o: EventObserver) {
         synchronized(observers) {
             observers.add(o)
         }
     }
 
-    @JvmStatic
     fun removeObserver(o: EventObserver) {
         synchronized(observers) {
             observers.remove(o)
         }
     }
 
-    @JvmStatic
     fun eventProperty(property: String, value: Long) {
         synchronized(observers) {
             for (o in observers)
@@ -59,7 +118,6 @@ object MPVLib {
         }
     }
 
-    @JvmStatic
     fun eventProperty(property: String, value: Double) {
         synchronized(observers) {
             for (o in observers)
@@ -67,7 +125,6 @@ object MPVLib {
         }
     }
 
-    @JvmStatic
     fun eventProperty(property: String, value: Boolean) {
         synchronized(observers) {
             for (o in observers)
@@ -75,7 +132,6 @@ object MPVLib {
         }
     }
 
-    @JvmStatic
     fun eventProperty(property: String, value: String) {
         synchronized(observers) {
             for (o in observers)
@@ -83,7 +139,6 @@ object MPVLib {
         }
     }
 
-    @JvmStatic
     fun eventProperty(property: String) {
         synchronized(observers) {
             for (o in observers)
@@ -91,7 +146,6 @@ object MPVLib {
         }
     }
 
-    @JvmStatic
     fun event(eventId: Int) {
         synchronized(observers) {
             for (o in observers)
@@ -99,26 +153,21 @@ object MPVLib {
         }
     }
 
-    private val log_observers = mutableListOf<LogObserver>()
-
-    @JvmStatic
     fun addLogObserver(o: LogObserver) {
-        synchronized(log_observers) {
-            log_observers.add(o)
+        synchronized(logObservers) {
+            logObservers.add(o)
         }
     }
 
-    @JvmStatic
     fun removeLogObserver(o: LogObserver) {
-        synchronized(log_observers) {
-            log_observers.remove(o)
+        synchronized(logObservers) {
+            logObservers.remove(o)
         }
     }
 
-    @JvmStatic
     fun logMessage(prefix: String, level: Int, text: String) {
-        synchronized(log_observers) {
-            for (o in log_observers)
+        synchronized(logObservers) {
+            for (o in logObservers)
                 o.logMessage(prefix, level, text)
         }
     }
