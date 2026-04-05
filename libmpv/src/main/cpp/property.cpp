@@ -19,7 +19,7 @@ extern "C" {
     jni_func(jstring, nativeGetPropertyString, jlong instance, jstring jproperty);
     jni_func(void, nativeSetPropertyString, jlong instance, jstring jproperty, jstring jvalue);
 
-    jni_func(void, observeProperty, jlong instance, jstring jproperty, jint jformat);
+    jni_func(void, nativeObserveProperty, jlong instance, jstring jproperty, jint jformat);
 }
 
 jni_func(jint, nativeSetOptionString, jlong instance, jstring joption, jstring jvalue) {
