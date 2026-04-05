@@ -33,11 +33,11 @@ static void prepare_environment(JNIEnv *env, jobject appctx, MPVInstance* instan
     setlocale(LC_NUMERIC, "C");
 
     if (!env->GetJavaVM(&instance->vm) && instance->vm)
-        av_jni_set_java_vm(instance->vm, NULL);
+        av_jni_set_java_vm(instance->vm, nullptr);
 
     jobject global_appctx = env->NewGlobalRef(appctx);
     if (global_appctx)
-        av_jni_set_android_app_ctx(global_appctx, NULL);
+        av_jni_set_android_app_ctx(global_appctx, nullptr);
 
     if (!instance->methods_initialized) {
         instance->methods_initialized = init_methods_cache(env, instance->javaObject);
@@ -83,7 +83,7 @@ jni_func(void, nativeDestroy, jlong instance) {
 
     mpv_instance->event_thread_request_exit = true;
     mpv_wakeup(mpv_instance->mpv);
-    pthread_join(mpv_instance->event_thread_id, NULL);
+    pthread_join(mpv_instance->event_thread_id, nullptr);
 
     mpv_terminate_destroy(mpv_instance->mpv);
     env->DeleteGlobalRef(mpv_instance->javaObject);
@@ -100,7 +100,7 @@ jni_func(void, nativeCommand, jlong instance, jobjectArray jarray) {
         die("too many command arguments");
 
     for (int i = 0; i < len; ++i)
-        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
+        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), nullptr);
 
     mpv_command(mpv_instance->mpv, arguments);
 

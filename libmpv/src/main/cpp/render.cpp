@@ -30,5 +30,5 @@ jni_func(void, nativeDetachSurface, jlong instance) {
         ALOGE("mpv_set_option(wid) returned error %s", mpv_error_string(result));
 
     env->DeleteGlobalRef(mpv_instance->surface);
-    mpv_instance->surface = NULL;
+    mpv_instance->surface = nullptr;
 }

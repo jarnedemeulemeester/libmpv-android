@@ -9,7 +9,7 @@
 
 static void sendPropertyUpdateToJava(JNIEnv *env, MPVInstance* instance, mpv_event_property *prop) {
     jstring jprop = env->NewStringUTF(prop->name);
-    jstring jvalue = NULL;
+    jstring jvalue = nullptr;
     switch (prop->format) {
     case MPV_FORMAT_NONE:
         env->CallVoidMethod(instance->javaObject, mpv_MPVLib_eventProperty_S, jprop);
@@ -105,6 +105,4 @@ void *event_thread(void *arg) {
     }
 
     instance->vm->DetachCurrentThread();
-
-    return NULL;
 }

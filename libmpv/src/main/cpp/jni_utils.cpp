@@ -6,11 +6,13 @@
 
 bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 {
-    int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
-    if (ret == JNI_EDETACHED)
-        return vm->AttachCurrentThread(env, NULL) == 0;
-    else
-        return ret == JNI_OK;
+    int ret = vm->GetEnv((void**)env, JNI_VERSION_1_6);
+
+    if (ret == JNI_EDETACHED) {
+        return vm->AttachCurrentThread(env, nullptr) == JNI_OK;
+    }
+
+    return ret == JNI_OK;
 }
 
 // Apparently it's considered slow to FindClass and GetMethodID every time we need them,
