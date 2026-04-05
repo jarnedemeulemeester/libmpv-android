@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.Surface
 
 @Suppress("unused")
-class MPVLib {
+class MPVLib private constructor(nativePtr: Long) {
     private var nativeInstance: Long = 0
     private val observers = mutableListOf<EventObserver>()
     private val logObservers = mutableListOf<LogObserver>()
@@ -16,85 +16,118 @@ class MPVLib {
                 System.loadLibrary(lib)
             }
         }
+
+        @JvmStatic
+        fun create(context: Context): MPVLib? {
+            val appCtx = context.applicationContext
+
+            val instance = MPVLib(0L)
+
+            val ptr = instance.nativeCreate(instance, appCtx)
+            if (ptr == 0L) {
+                return null
+            }
+
+            instance.nativeInstance = ptr
+            return instance
+        }
     }
 
-    fun create(appctx: Context) {
-        nativeInstance = nativeCreate(this, appctx)
+    private fun checkCreated() {
+        if (nativeInstance == 0L) {
+            throw IllegalStateException("MPVLib is not initialized")
+        }
     }
+
     private external fun nativeCreate(thiz: MPVLib, appctx: Context): Long
 
     fun init() {
+        checkCreated()
         nativeInit(nativeInstance)
     }
     private external fun nativeInit(instance: Long)
 
     fun destroy() {
+        checkCreated()
         nativeDestroy(nativeInstance)
         nativeInstance = 0
     }
     private external fun nativeDestroy(instance: Long)
 
     fun attachSurface(surface: Surface) {
+        checkCreated()
         nativeAttachSurface(nativeInstance, surface)
     }
     private external fun nativeAttachSurface(instance: Long, surface: Surface)
 
     fun detachSurface() {
+        checkCreated()
         nativeDetachSurface(nativeInstance)
     }
     private external fun nativeDetachSurface(instance: Long)
 
     fun command(cmd: Array<String>) {
+        checkCreated()
         nativeCommand(nativeInstance, cmd)
     }
     private external fun nativeCommand(instance: Long, cmd: Array<String>)
 
     fun setOptionString(name: String, value: String): Int {
+        checkCreated()
         return nativeSetOptionString(nativeInstance, name, value)
     }
     private external fun nativeSetOptionString(instance: Long, name: String, value: String): Int
 
     fun getPropertyInt(property: String): Int? {
+        checkCreated()
         return nativeGetPropertyInt(nativeInstance, property)
     }
     private external fun nativeGetPropertyInt(instance: Long, property: String): Int?
 
     fun setPropertyInt(property: String, value: Int) {
+        checkCreated()
         nativeSetPropertyInt(nativeInstance, property, value)
     }
-    private external fun nativeSetPropertyInt(instance: Long, property: String, value: Int): Int
+    private external fun nativeSetPropertyInt(instance: Long, property: String, value: Int)
 
     fun getPropertyDouble(property: String): Double? {
+        checkCreated()
         return nativeGetPropertyDouble(nativeInstance, property)
     }
     private external fun nativeGetPropertyDouble(instance: Long, property: String): Double?
 
     fun setPropertyDouble(property: String, value: Double) {
+        checkCreated()
         nativeSetPropertyDouble(nativeInstance, property, value)
     }
     private external fun nativeSetPropertyDouble(instance: Long, property: String, value: Double)
 
     fun getPropertyBoolean(property: String): Boolean? {
+        checkCreated()
         return nativeGetPropertyBoolean(nativeInstance, property)
     }
     private external fun nativeGetPropertyBoolean(instance: Long, property: String): Boolean?
 
     fun setPropertyBoolean(property: String, value: Boolean) {
+        checkCreated()
         nativeSetPropertyBoolean(nativeInstance, property, value)
     }
     private external fun nativeSetPropertyBoolean(instance: Long, property: String, value: Boolean)
 
     fun getPropertyString(property: String): String? {
+        checkCreated()
         return nativeGetPropertyString(nativeInstance, property)
     }
     private external fun nativeGetPropertyString(instance: Long, property: String): String?
 
     fun setPropertyString(property: String, value: String) {
+        checkCreated()
         nativeSetPropertyString(nativeInstance, property, value)
     }
     private external fun nativeSetPropertyString(instance: Long, property: String, value: String)
 
     fun observeProperty(property: String, format: Int) {
+        checkCreated()
         nativeObserveProperty(nativeInstance, property, format)
     }
     private external fun nativeObserveProperty(instance: Long, property: String, format: Int)
