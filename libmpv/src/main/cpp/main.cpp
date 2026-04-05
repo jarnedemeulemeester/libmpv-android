@@ -45,6 +45,7 @@ static void prepare_environment(JNIEnv *env, MPVInstance* instance) {
 
 jni_func(jlong, nativeCreate, jobject thiz, jobject appctx) {
     auto instance = new MPVInstance();
+    instance->event_thread_id = 0;
     instance->event_thread_request_exit = false;
     instance->javaObject = env->NewGlobalRef(thiz);
     instance->appCtx = env->NewGlobalRef(appctx);
@@ -83,7 +84,11 @@ jni_func(void, nativeDestroy, jlong instance) {
 
     mpv_instance->event_thread_request_exit = true;
     mpv_wakeup(mpv_instance->mpv);
-    pthread_join(mpv_instance->event_thread_id, nullptr);
+
+    if (mpv_instance->event_thread_id != 0) {
+        pthread_join(mpv_instance->event_thread_id, nullptr);
+        mpv_instance->event_thread_id = 0;
+    }
 
     mpv_terminate_destroy(mpv_instance->mpv);
     if (mpv_instance->surface) {
