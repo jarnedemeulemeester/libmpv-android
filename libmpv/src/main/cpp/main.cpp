@@ -86,6 +86,10 @@ jni_func(void, nativeDestroy, jlong instance) {
     pthread_join(mpv_instance->event_thread_id, nullptr);
 
     mpv_terminate_destroy(mpv_instance->mpv);
+    if (mpv_instance->surface) {
+        env->DeleteGlobalRef(mpv_instance->surface);
+        mpv_instance->surface = nullptr;
+    }
     env->DeleteGlobalRef(mpv_instance->javaObject);
     delete mpv_instance;
 }
