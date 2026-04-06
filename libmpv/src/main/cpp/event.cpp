@@ -41,10 +41,6 @@ static void sendEventToJava(JNIEnv *env, MPVInstance* instance, int event) {
     env->CallVoidMethod(instance->javaObject, mpv_MPVLib_event, event);
 }
 
-static inline bool invalid_utf8(unsigned char c) {
-    return c == 0xc0 || c == 0xc1 || c >= 0xf5;
-}
-
 static void sendLogMessageToJava(JNIEnv *env, MPVInstance* instance, mpv_event_log_message *msg) {
     // filter the most obvious cases of invalid utf-8, since Java would choke on it
     const auto invalid_utf8 = [] (unsigned char c) {

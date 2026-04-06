@@ -3,6 +3,7 @@
 
 #include <jni.h>
 #include <cstdlib>
+#include <mutex>
 
 bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 {
@@ -15,26 +16,33 @@ bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
     return ret == JNI_OK;
 }
 
+static std::once_flag init_flag;
+
 // Apparently it's considered slow to FindClass and GetMethodID every time we need them,
 // so let's have a nice cache here
-bool init_methods_cache(JNIEnv *env, jobject instance) {
-    #define FIND_CLASS(name) reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(name)))
-    java_Integer = FIND_CLASS("java/lang/Integer");
-    java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
-    java_Double = FIND_CLASS("java/lang/Double");
-    java_Double_init = env->GetMethodID(java_Double, "<init>", "(D)V");
-    java_Boolean = FIND_CLASS("java/lang/Boolean");
-    java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
+void init_methods_cache(JNIEnv *env) {
+    std::call_once(init_flag, [env]() {
+        auto find_and_ref = [&](const char* name) -> jclass {
+            jclass localClass = env->FindClass(name);
+            auto globalRef = reinterpret_cast<jclass>(env->NewGlobalRef(localClass));
+            env->DeleteLocalRef(localClass);
+            return globalRef;
+        };
 
-    mpv_MPVLib = env->GetObjectClass(instance);
-    mpv_MPVLib_eventProperty_S  = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;)V"); // eventProperty(String)
-    mpv_MPVLib_eventProperty_Sb = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Z)V"); // eventProperty(String, boolean)
-    mpv_MPVLib_eventProperty_Sl = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
-    mpv_MPVLib_eventProperty_Sd = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;D)V"); // eventProperty(String, double)
-    mpv_MPVLib_eventProperty_SS = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
-    mpv_MPVLib_event = env->GetMethodID(mpv_MPVLib, "event", "(I)V"); // event(int)
-    mpv_MPVLib_logMessage_SiS = env->GetMethodID(mpv_MPVLib, "logMessage", "(Ljava/lang/String;ILjava/lang/String;)V"); // logMessage(String, int, String)
-    #undef FIND_CLASS
+        java_Integer = find_and_ref("java/lang/Integer");
+        java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
+        java_Double = find_and_ref("java/lang/Double");
+        java_Double_init = env->GetMethodID(java_Double, "<init>", "(D)V");
+        java_Boolean = find_and_ref("java/lang/Boolean");
+        java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
 
-    return true;
+        mpv_MPVLib = find_and_ref("dev/jdtech/mpv/MPVLib");
+        mpv_MPVLib_eventProperty_S  = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;)V"); // eventProperty(String)
+        mpv_MPVLib_eventProperty_Sb = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Z)V"); // eventProperty(String, boolean)
+        mpv_MPVLib_eventProperty_Sl = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
+        mpv_MPVLib_eventProperty_Sd = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;D)V"); // eventProperty(String, double)
+        mpv_MPVLib_eventProperty_SS = env->GetMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
+        mpv_MPVLib_event = env->GetMethodID(mpv_MPVLib, "event", "(I)V"); // event(int)
+        mpv_MPVLib_logMessage_SiS = env->GetMethodID(mpv_MPVLib, "logMessage", "(Ljava/lang/String;ILjava/lang/String;)V"); // logMessage(String, int, String)
+    });
 }

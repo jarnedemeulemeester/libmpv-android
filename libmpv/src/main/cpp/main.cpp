@@ -38,9 +38,7 @@ static void prepare_environment(JNIEnv *env, MPVInstance* instance) {
     if (instance->appCtx)
         av_jni_set_android_app_ctx(instance->appCtx, nullptr);
 
-    if (!instance->methods_initialized) {
-        instance->methods_initialized = init_methods_cache(env, instance->javaObject);
-    }
+    init_methods_cache(env);
 }
 
 jni_func(jlong, nativeCreate, jobject thiz, jobject appctx) {
@@ -54,7 +52,7 @@ jni_func(jlong, nativeCreate, jobject thiz, jobject appctx) {
     instance->mpv = mpv_create();
     if (!instance->mpv) {
         delete instance;
-        die("context init failed");
+        return 0;
     }
 
     mpv_request_log_messages(instance->mpv, "v");
