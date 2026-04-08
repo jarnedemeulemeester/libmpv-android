@@ -10,7 +10,7 @@ plugins {
 android {
     namespace = "dev.jdtech.mpv"
     compileSdk = 36
-    buildToolsVersion = "36.1.0"
+    buildToolsVersion = "37.0.0"
     ndkVersion = "29.0.14206865"
 
     defaultConfig {
@@ -35,8 +35,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
@@ -55,7 +55,7 @@ mavenPublishing {
     coordinates(
         groupId = "dev.jdtech.mpv",
         artifactId = "libmpv",
-        version = "0.5.1"
+        version = "1.0.0"
     )
 
     pom {

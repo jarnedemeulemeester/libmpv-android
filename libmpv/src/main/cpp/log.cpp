@@ -1,9 +1,22 @@
 #include "log.h"
 
-#include <cstdlib>
+#include "globals.h"
+#include "jni_utils.h"
 
-void die(const char *msg)
+void die(JNIEnv *env, const char *msg)
 {
     ALOGE("%s", msg);
-    exit(1);
+    throw_java_exception(env, msg);
+}
+
+void throw_java_exception(JNIEnv *env, const char *msg)
+{
+    jclass runtimeClass = env->FindClass("java/lang/RuntimeException");
+    if (runtimeClass == nullptr) {
+        return;
+    }
+
+    env->ThrowNew(runtimeClass, msg);
+
+    env->DeleteLocalRef(runtimeClass);
 }

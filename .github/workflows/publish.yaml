@@ -13,28 +13,43 @@ jobs:
     if: ${{ contains(github.repository_owner, 'jarnedemeulemeester') || startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+
       - name: Setup Java JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
+
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Symlink SDK
         working-directory: ./buildscripts
         run: |
           mkdir sdk
           ln -s ${ANDROID_HOME} ./sdk/android-sdk-linux
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf pkgconf libtool ninja-build python3-pip python3-jinja2 gperf nasm
+          sudo pip3 install --break-system-packages meson
+
       - name: Download dependencies
         working-directory: ./buildscripts
+        env:
+          IN_CI: 1
         run: ./download.sh
+
       - name: Apply patches
         working-directory: ./buildscripts
         run: ./patch.sh
+
       - name: Build
         working-directory: ./buildscripts
         run: ./build.sh
+
       - name: Publish
         run: ./gradlew publishToMavenCentral --no-configuration-cache
         env:
@@ -43,6 +58,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <android/log.h>
+#include <jni.h>
 
 #define DEBUG 1
 
@@ -12,9 +13,5 @@
 #define ALOGV(...) (void)0
 #endif
 
-__attribute__((noreturn)) void die(const char *msg);
-
-#define CHECK_MPV_INIT() do { \
-	if (__builtin_expect(!g_mpv, 0)) \
-        die("libmpv is not initialized"); \
-	} while (0)
+void die(JNIEnv *env, const char *msg);
+void throw_java_exception(JNIEnv *env, const char *msg);
