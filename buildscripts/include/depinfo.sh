@@ -19,7 +19,7 @@ v_fontconfig=2.17.1
 v_mbedtls=3.6.6
 v_libplacebo=7.360.1
 v_dav1d=1.5.3
-v_ffmpeg=8.1
+v_ffmpeg=8.1.2
 v_mpv=0.41.0
 
 
