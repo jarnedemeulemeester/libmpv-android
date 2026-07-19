@@ -18,7 +18,7 @@ v_libxml2=2.15.3
 v_fontconfig=2.18.2
 v_mbedtls=3.6.7
 v_libplacebo=7.360.1
-v_dav1d=1.5.3
+v_dav1d=1.5.4
 v_ffmpeg=8.1.2
 v_mpv=0.41.0
 
