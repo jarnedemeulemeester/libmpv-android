@@ -1,6 +1,6 @@
 [versions]
 android-plugin = "9.3.0"
-maven-publish = "0.36.0"
+maven-publish = "0.37.0"
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
