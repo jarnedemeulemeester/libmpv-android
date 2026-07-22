@@ -179,6 +179,13 @@ class MPVLib private constructor(nativePtr: Long) {
         }
     }
 
+    fun endFile(reason: Int, error: Int) {
+        synchronized(observers) {
+            for (o in observers)
+                o.endFile(reason, error)
+        }
+    }
+
     fun event(eventId: Int) {
         synchronized(observers) {
             for (o in observers)
@@ -211,6 +218,7 @@ class MPVLib private constructor(nativePtr: Long) {
         fun eventProperty(property: String, value: Double)
         fun eventProperty(property: String, value: Boolean)
         fun eventProperty(property: String, value: String)
+        fun endFile(reason: Int, error: Int)
         fun event(eventId: Int)
     }
 
@@ -229,6 +237,14 @@ class MPVLib private constructor(nativePtr: Long) {
         const val MPV_FORMAT_NODE_ARRAY: Int = 7
         const val MPV_FORMAT_NODE_MAP: Int = 8
         const val MPV_FORMAT_BYTE_ARRAY: Int = 9
+    }
+
+    object MpvEndFileReason {
+        const val MPV_END_FILE_REASON_EOF: Int = 0
+        const val MPV_END_FILE_REASON_STOP: Int = 2
+        const val MPV_END_FILE_REASON_QUIT: Int = 3
+        const val MPV_END_FILE_REASON_ERROR: Int = 4
+        const val MPV_END_FILE_REASON_REDIRECT: Int = 5
     }
 
     object MpvEvent {
@@ -264,5 +280,29 @@ class MPVLib private constructor(nativePtr: Long) {
         const val MPV_LOG_LEVEL_V: Int = 50
         const val MPV_LOG_LEVEL_DEBUG: Int = 60
         const val MPV_LOG_LEVEL_TRACE: Int = 70
+    }
+
+    object MpvError {
+        const val MPV_ERROR_SUCCESS: Int = 0
+        const val MPV_ERROR_EVENT_QUEUE_FULL: Int = -1
+        const val MPV_ERROR_NOMEM: Int = -2
+        const val MPV_ERROR_UNINITIALIZED: Int = -3
+        const val MPV_ERROR_INVALID_PARAMETER: Int = -4
+        const val MPV_ERROR_OPTION_NOT_FOUND: Int = -5
+        const val MPV_ERROR_OPTION_FORMAT: Int = -6
+        const val MPV_ERROR_OPTION_ERROR: Int = -7
+        const val MPV_ERROR_PROPERTY_NOT_FOUND: Int = -8
+        const val MPV_ERROR_PROPERTY_FORMAT: Int = -9
+        const val MPV_ERROR_PROPERTY_UNAVAILABLE: Int = -10
+        const val MPV_ERROR_PROPERTY_ERROR: Int = -11
+        const val MPV_ERROR_COMMAND: Int = -12
+        const val MPV_ERROR_LOADING_FAILED: Int = -13
+        const val MPV_ERROR_AO_INIT_FAILED: Int = -14
+        const val MPV_ERROR_VO_INIT_FAILED: Int = -15
+        const val MPV_ERROR_NOTHING_TO_PLAY: Int = -16
+        const val MPV_ERROR_UNKNOWN_FORMAT: Int = -17
+        const val MPV_ERROR_UNSUPPORTED: Int = -18
+        const val MPV_ERROR_NOT_IMPLEMENTED: Int = -19
+        const val MPV_ERROR_GENERIC: Int = -20
     }
 }
