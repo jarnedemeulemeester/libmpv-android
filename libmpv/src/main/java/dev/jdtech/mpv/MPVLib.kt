@@ -48,9 +48,10 @@ class MPVLib private constructor(nativePtr: Long) {
     private external fun nativeInit(instance: Long)
 
     fun destroy() {
-        checkCreated()
-        nativeDestroy(nativeInstance)
-        nativeInstance = 0
+        if (nativeInstance != 0L) {
+            nativeDestroy(nativeInstance)
+            nativeInstance = 0L
+        }
     }
     private external fun nativeDestroy(instance: Long)
 
