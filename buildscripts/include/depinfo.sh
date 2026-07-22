@@ -8,7 +8,7 @@ v_ndk=29.0.14206865
 v_sdk_build_tools=37.0.0
 v_cmake=4.1.2
 
-v_lua=5.2.4
+v_lua=5.5.0
 v_libunibreak=7_0
 v_libass=0.17.5
 v_harfbuzz=14.2.1
