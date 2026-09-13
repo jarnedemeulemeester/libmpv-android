@@ -4,7 +4,7 @@
 
 v_platform=android-36
 v_sdk=14742923_latest
-v_ndk=29.0.14206865
+v_ndk=30.0.16248370
 v_sdk_build_tools=37.0.0
 v_cmake=4.1.2
 
