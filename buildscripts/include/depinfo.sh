@@ -17,6 +17,7 @@ v_freetype=2-14-3
 v_libxml2=2.15.4
 v_fontconfig=2.18.3
 v_mbedtls=3.6.7
+v_shaderc=2026.3
 v_libplacebo=7.360.1
 v_dav1d=1.5.4
 v_ffmpeg=9.0.1
@@ -36,6 +37,8 @@ dep_harfbuzz=()
 dep_libunibreak=()
 dep_libass=(freetype fontconfig fribidi harfbuzz libunibreak)
 dep_lua=()
-dep_libplacebo=()
+dep_shaderc=()
+dep_libplacebo=(shaderc)
 dep_mpv=(ffmpeg libass lua libplacebo)
 dep_mpv_android=(mpv)
+
