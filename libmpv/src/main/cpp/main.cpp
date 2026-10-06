@@ -27,6 +27,7 @@ extern "C" {
     jni_func(void, nativeInit, jlong instance);
     jni_func(void, nativeDestroy, jlong instance);
     jni_func(void, nativeCommand, jlong instance, jobjectArray jarray);
+    jni_func(jint, nativeRequestLogMessages, jlong instance, jstring jlevel);
 };
 
 static void prepare_environment(JNIEnv *env, MPVInstance* instance) {
@@ -134,4 +135,18 @@ jni_func(void, nativeCommand, jlong instance, jobjectArray jarray) {
             env->DeleteLocalRef(stringRefs[i]);
         }
     }
+}
+
+jni_func(jint, nativeRequestLogMessages, jlong instance, jstring jlevel) {
+    auto mpv_instance = reinterpret_cast<MPVInstance*>(instance);
+    if (!mpv_instance->mpv) {
+        die(env, "mpv is not initialized");
+        return 0;
+    }
+
+    const char *level = env->GetStringUTFChars(jlevel, nullptr);
+    int result = mpv_request_log_messages(mpv_instance->mpv, level);
+    env->ReleaseStringUTFChars(jlevel, level);
+
+    return result;
 }
