@@ -73,6 +73,19 @@ class MPVLib private constructor(nativePtr: Long) {
     }
     private external fun nativeCommand(instance: Long, cmd: Array<String>)
 
+    /**
+     * Sets the minimum level of mpv log messages delivered to [LogObserver]s
+     * and echoed to logcat ("no", "fatal", "error", "warn", "info", "v",
+     * "debug", "trace"). Defaults to "v". Verbose messages include the URLs
+     * mpv opens, so apps playing authenticated URLs may want "warn" or "no".
+     * Returns an mpv error code (0 on success).
+     */
+    fun requestLogMessages(level: String): Int {
+        checkCreated()
+        return nativeRequestLogMessages(nativeInstance, level)
+    }
+    private external fun nativeRequestLogMessages(instance: Long, level: String): Int
+
     fun setOptionString(name: String, value: String): Int {
         checkCreated()
         return nativeSetOptionString(nativeInstance, name, value)
