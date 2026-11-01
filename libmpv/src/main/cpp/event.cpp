@@ -88,7 +88,8 @@ void *event_thread(void *arg) {
         switch (mp_event->event_id) {
         case MPV_EVENT_LOG_MESSAGE:
             msg = (mpv_event_log_message*)mp_event->data;
-            ALOGV("[%s:%s] %s", msg->prefix, msg->level, msg->text);
+            __android_log_print(mpv_level_to_android(msg->log_level), LOG_TAG,
+                                "[%s:%s] %s", msg->prefix, msg->level, msg->text);
             sendLogMessageToJava(env, instance, msg);
             break;
         case MPV_EVENT_PROPERTY_CHANGE:
