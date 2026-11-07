@@ -23,7 +23,7 @@ cd $build
 	--disable-{manual,docs,ares,unix-sockets,doh} \
 	--disable-{rtsp,dict,telnet,tftp,pop3,imap,smtp,gopher,mqtt,ntlm} \
 	--disable-{ipfs,ldap} \
-	--without-zlib --without-brotli --without-zstd \
+	--without-brotli --without-zstd \
 	--disable-websockets
 
 make -j$cores
