@@ -43,11 +43,18 @@ fi
 # lua
 if [ ! -d lua ]; then
 	mkdir lua
-	$WGET http://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
+	$WGET https://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
 		tar -xz -C lua --strip-components=1
 fi
 
 [ ! -d libplacebo ] && git clone --depth 1 --branch v$v_libplacebo --recurse-submodules https://code.videolan.org/videolan/libplacebo.git libplacebo
+
+# curl (release tarball, the git repo has no generated configure script)
+if [ ! -d curl ]; then
+	mkdir curl
+	$WGET https://curl.se/download/curl-$v_curl.tar.gz -O - | \
+		tar -xz -C curl --strip-components=1
+fi
 
 # mpv
 [ ! -d mpv ] && git clone --depth 1 --branch v$v_mpv https://github.com/mpv-player/mpv.git mpv

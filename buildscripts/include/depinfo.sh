@@ -21,12 +21,14 @@ v_libplacebo=7.387.0
 v_dav1d=1.5.4
 v_ffmpeg=9.0.2
 v_mpv=0.42.0
+v_curl=8.23.0
 
 
 ## Dependency tree
 # I would've used a dict but putting arrays in a dict is not a thing
 
 dep_mbedtls=()
+dep_curl=(mbedtls)
 dep_dav1d=()
 dep_ffmpeg=(mbedtls dav1d libxml2)
 dep_freetype2=()
@@ -37,5 +39,5 @@ dep_libunibreak=()
 dep_libass=(freetype fontconfig fribidi harfbuzz libunibreak)
 dep_lua=()
 dep_libplacebo=()
-dep_mpv=(ffmpeg libass lua libplacebo)
+dep_mpv=(ffmpeg libass lua libplacebo curl)
 dep_mpv_android=(mpv)
