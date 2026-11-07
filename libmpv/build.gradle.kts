@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "dev.jdtech.mpv"
-    compileSdk = 36
+    compileSdk = 37
     buildToolsVersion = "37.0.0"
     ndkVersion = "30.0.16248370"
 

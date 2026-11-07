@@ -2,7 +2,7 @@
 
 ## Dependency versions
 
-v_platform=android-36
+v_platform=android-37.0
 v_sdk=14742923_latest
 v_ndk=30.0.16248370
 v_sdk_build_tools=37.0.0
