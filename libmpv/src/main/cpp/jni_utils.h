@@ -16,11 +16,11 @@ UTIL_EXTERN jclass java_Integer, java_Double, java_Boolean;
 UTIL_EXTERN jmethodID java_Integer_init, java_Double_init, java_Boolean_init;
 
 UTIL_EXTERN jclass mpv_MPVLib;
-UTIL_EXTERN jmethodID mpv_MPVLib_eventProperty_S,
+UTIL_EXTERN jmethodID mpv_MPVLib_event,
+        mpv_MPVLib_eventEndFile,
+        mpv_MPVLib_eventProperty_S,
         mpv_MPVLib_eventProperty_Sb,
         mpv_MPVLib_eventProperty_Sl,
         mpv_MPVLib_eventProperty_Sd,
         mpv_MPVLib_eventProperty_SS,
-        mpv_MPVLib_endFile,
-        mpv_MPVLib_event,
         mpv_MPVLib_logMessage_SiS;

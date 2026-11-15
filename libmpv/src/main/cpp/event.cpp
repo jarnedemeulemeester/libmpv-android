@@ -37,8 +37,8 @@ static void sendPropertyUpdateToJava(JNIEnv *env, MPVInstance* instance, mpv_eve
         env->DeleteLocalRef(jvalue);
 }
 
-static void sendEndFileToJava(JNIEnv *env, MPVInstance* instance, mpv_event_end_file *end_file) {
-    env->CallVoidMethod(instance->javaObject, mpv_MPVLib_endFile, end_file->reason, end_file->error);
+static void sendEventEndFileToJava(JNIEnv *env, MPVInstance* instance, mpv_event_end_file *end_file) {
+    env->CallVoidMethod(instance->javaObject, mpv_MPVLib_eventEndFile, end_file->reason, end_file->error);
 }
 
 static void sendEventToJava(JNIEnv *env, MPVInstance* instance, int event) {
@@ -103,7 +103,7 @@ void *event_thread(void *arg) {
             break;
         case MPV_EVENT_END_FILE:
             mp_end_file = (mpv_event_end_file*)mp_event->data;
-            sendEndFileToJava(env, instance, mp_end_file);
+            sendEventEndFileToJava(env, instance, mp_end_file);
             break;
         default:
             ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));

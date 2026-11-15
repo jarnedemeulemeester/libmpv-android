@@ -158,6 +158,27 @@ class MPVLib private constructor(nativePtr: Long) {
         }
     }
 
+    fun event(eventId: Int) {
+        synchronized(observers) {
+            for (o in observers)
+                o.event(eventId)
+        }
+    }
+
+    fun eventEndFile(reason: Int, error: Int) {
+        synchronized(observers) {
+            for (o in observers)
+                o.eventEndFile(reason, error)
+        }
+    }
+
+    fun eventProperty(property: String) {
+        synchronized(observers) {
+            for (o in observers)
+                o.eventProperty(property)
+        }
+    }
+
     fun eventProperty(property: String, value: Long) {
         synchronized(observers) {
             for (o in observers)
@@ -186,27 +207,6 @@ class MPVLib private constructor(nativePtr: Long) {
         }
     }
 
-    fun eventProperty(property: String) {
-        synchronized(observers) {
-            for (o in observers)
-                o.eventProperty(property)
-        }
-    }
-
-    fun endFile(reason: Int, error: Int) {
-        synchronized(observers) {
-            for (o in observers)
-                o.endFile(reason, error)
-        }
-    }
-
-    fun event(eventId: Int) {
-        synchronized(observers) {
-            for (o in observers)
-                o.event(eventId)
-        }
-    }
-
     fun addLogObserver(o: LogObserver) {
         synchronized(logObservers) {
             logObservers.add(o)
@@ -227,17 +227,17 @@ class MPVLib private constructor(nativePtr: Long) {
     }
 
     interface EventObserver {
-        fun eventProperty(property: String)
-        fun eventProperty(property: String, value: Long)
-        fun eventProperty(property: String, value: Double)
-        fun eventProperty(property: String, value: Boolean)
-        fun eventProperty(property: String, value: String)
-        fun endFile(reason: Int, error: Int)
-        fun event(eventId: Int)
+        fun event(eventId: Int) {}
+        fun eventEndFile(reason: Int, error: Int) {}
+        fun eventProperty(property: String) {}
+        fun eventProperty(property: String, value: Long) {}
+        fun eventProperty(property: String, value: Double) {}
+        fun eventProperty(property: String, value: Boolean) {}
+        fun eventProperty(property: String, value: String) {}
     }
 
     interface LogObserver {
-        fun logMessage(prefix: String, level: Int, text: String)
+        fun logMessage(prefix: String, level: Int, text: String) {}
     }
 
     object MpvFormat {
